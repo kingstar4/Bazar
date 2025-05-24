@@ -1,0 +1,149 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/PaytoneOne-Regular.ttf",
+      "sha1": "5a2d7fbff111eda7dc7023741752f5c6dc3b1b98"
+    },
+    {
+      "path": "assets/fonts/Work Sans Bold.ttf",
+      "sha1": "29ee9214b2baa985b6ca8f1474a5d3c799a4fe81"
+    },
+    {
+      "path": "assets/fonts/Work Sans Regular.ttf",
+      "sha1": "943c38fa3c44e48acc89c9547e30dc57991cb150"
+    },
+    {
+      "path": "assets/img/a1.png",
+      "sha1": "18dc31f906c0dd9bae9b469ca1eb7562cd8c7534"
+    },
+    {
+      "path": "assets/img/a2.png",
+      "sha1": "c6eedee927cdfee86fcde0ae460c99a259dd9eed"
+    },
+    {
+      "path": "assets/img/a3.png",
+      "sha1": "0ca85c44f0f2decb1a5ff921d21220b1883a1506"
+    },
+    {
+      "path": "assets/img/appleicon.jpg",
+      "sha1": "4bda9b40c53eab249ae4721a872b7a2c40b2cd05"
+    },
+    {
+      "path": "assets/img/avatar.png",
+      "sha1": "29d47c31f5c1ea9d55e37b2f4f862c3919f7ac52"
+    },
+    {
+      "path": "assets/img/b1.jpg",
+      "sha1": "9824d9646dd14f9d30e504084260da2169c8278d"
+    },
+    {
+      "path": "assets/img/b2.jpg",
+      "sha1": "18461db95a66275699337a4875c5d55465b6964f"
+    },
+    {
+      "path": "assets/img/b3.jpg",
+      "sha1": "3b55aaf652b0825fa617817f7932c90dea156f27"
+    },
+    {
+      "path": "assets/img/b4.jpg",
+      "sha1": "7e4e74a632c65b38aab19e1d03600cb45d6ad356"
+    },
+    {
+      "path": "assets/img/congrats.png",
+      "sha1": "6f940f024390b0c6be764b3382ba06da3a8ead4c"
+    },
+    {
+      "path": "assets/img/googleicon.png",
+      "sha1": "9e06222a9c1e78ccc8b7da59c4fc1311b25f6ddd"
+    },
+    {
+      "path": "assets/img/h1.png",
+      "sha1": "f28ff290b0289bf460d890243dfdb3d46641aadf"
+    },
+    {
+      "path": "assets/img/logo.png",
+      "sha1": "ec076ec44429e882708b0856aa12132ca8ad0974"
+    },
+    {
+      "path": "assets/img/slider1.png",
+      "sha1": "cb64a69cdced2a182b8c173f7bcef61f1fae808c"
+    },
+    {
+      "path": "assets/img/slider2.png",
+      "sha1": "d53b1323e8d58298e5ec7924c534638fe7a3412e"
+    },
+    {
+      "path": "assets/img/slider3.png",
+      "sha1": "dd5f13088adf617a3a8f932a1e97316f854e2735"
+    },
+    {
+      "path": "assets/img/t1.png",
+      "sha1": "fdcfb71669033930f7261cf184390f8d3e396d99"
+    },
+    {
+      "path": "assets/img/t2.png",
+      "sha1": "1b545a1a78d00ff4043d09ecd4c99e5fbd53bb66"
+    },
+    {
+      "path": "assets/img/t3.jpeg",
+      "sha1": "eacd10c7a9093be02af0daae3860c40ee151f028"
+    },
+    {
+      "path": "assets/img/t4.png",
+      "sha1": "297ce590f7e71ccf5115d57ecb545ee4737aaefd"
+    },
+    {
+      "path": "assets/img/t5.png",
+      "sha1": "51013174c92dbc33ce78edbc15a8bbecac68ec62"
+    },
+    {
+      "path": "assets/img/t6.png",
+      "sha1": "b3a0e2dfb87d7947f34e05bca78ed08ff95af9b4"
+    },
+    {
+      "path": "assets/img/t7.png",
+      "sha1": "c3518be54064e45cdedfa5d3a4f7076e787d7a49"
+    },
+    {
+      "path": "assets/img/t8.png",
+      "sha1": "4ae657917c4a03ab98bb5c9130a22a98ba565334"
+    },
+    {
+      "path": "assets/img/t9.png",
+      "sha1": "3ea1f0c037e75924274d8d11b3289c7d0fcb27cf"
+    },
+    {
+      "path": "assets/img/v1.png",
+      "sha1": "ffc8110d0a821a05614409b09bc156aa6ea3d78e"
+    },
+    {
+      "path": "assets/img/v2.png",
+      "sha1": "247bc285b399d47abbfdadc4f8be3f8f1be7fd2d"
+    },
+    {
+      "path": "assets/img/v3.png",
+      "sha1": "b0b96dc957176f93a9291bfa09f2ba49aca8d860"
+    },
+    {
+      "path": "assets/img/v4.png",
+      "sha1": "f75430e71993afa77ac3e17eac122abc605a305e"
+    },
+    {
+      "path": "assets/img/v5.png",
+      "sha1": "33e82eebc1a022c4ce4ad89f0ba2b8f0c83c87c8"
+    },
+    {
+      "path": "assets/img/v6.png",
+      "sha1": "e16a73393270b46e8127952fe9475b03ea63ca3c"
+    },
+    {
+      "path": "assets/img/v7.png",
+      "sha1": "8bbb0d101d028f77ad6bb68f7a2afbef66c5583b"
+    },
+    {
+      "path": "assets/img/v8.png",
+      "sha1": "22ff81e528593fd3c057440025c53819ebb440a0"
+    }
+  ]
+}

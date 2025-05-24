@@ -1,0 +1,23 @@
+const newBooksRecord = [
+    { id: 1, title: 'The Great Gatsby', price: '$10', rating: 4.5, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Novels' },
+    { id: 2, title: 'Atomic Habits', price: '$15', rating: 4.7, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Self Love' },
+    { id: 3, title: 'Brief History of Time', price: '$20', rating: 4.8, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Science' },
+    { id: 4, title: 'Pride and Prejudice', price: '$12', rating: 4.6, slideImg: 'https://m.media-amazon.com/images/I/91hhCXj9dbL.jpg', category: 'Novels' },
+    { id: 5, title: 'You Are a Badass', price: '$18', rating: 4.4, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Self Love' },
+    { id: 6, title: 'The Theory of Everything', price: '$25', rating: 4.9, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Science' },
+    { id: 7, title: 'Romeo and Juliet', price: '$14', rating: 4.3, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Romantic' },
+    { id: 8, title: 'To Kill a Mockingbird', price: '$16', rating: 4.8, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Novels' },
+    { id: 9, title: 'The Subtle Art of Not Giving a F*ck', price: '$20', rating: 4.6, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Self Love' },
+    { id: 10, title: 'The Cosmos', price: '$30', rating: 4.9, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Science' },
+    { id: 11, title: 'Love in the Time of Cholera', price: '$22', rating: 4.7, slideImg: require('../../../assets/img/t3.jpeg'), category: 'Romantic' },
+    { id: 12, title: '1984', price: '$18', rating: 4.5, slideImg: require('../../../assets/img/t1.png'), category: 'Novels' },
+    { id: 13, title: 'The Gifts of Imperfection', price: '$17', rating: 4.6, slideImg: require('../../../assets/img/t1.png'), category: 'Self Love' },
+    { id: 14, title: 'The Origin of Species', price: '$28', rating: 4.8, slideImg: require('../../../assets/img/t1.png'), category: 'Science' },
+    { id: 15, title: 'The Notebook', price: '$19', rating: 4.5, slideImg: require('../../../assets/img/t1.png'), category: 'Romantic' },
+    { id: 16, title: 'Moby Dick', price: '$21', rating: 4.3, slideImg: require('../../../assets/img/t1.png'), category: 'Novels' },
+    { id: 17, title: 'Daring Greatly', price: '$24', rating: 4.7, slideImg: require('../../../assets/img/t1.png'), category: 'Self Love' },
+    { id: 18, title: 'Astrophysics for People in a Hurry', price: '$26', rating: 4.9, slideImg: require('../../../assets/img/t1.png'), category: 'Science' },
+    { id: 19, title: 'The Fault in Our Stars', price: '$23', rating: 4.7, slideImg: require('../../../assets/img/t1.png'), category: 'Romantic' },
+    { id: 20, title: 'War and Peace', price: '$32', rating: 4.8, slideImg: require('../../../assets/img/t1.png'), category: 'Novels' },
+  ];
+  export default newBooksRecord;
