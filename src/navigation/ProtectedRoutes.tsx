@@ -4,11 +4,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Home from '../screens/Home';
-import Profile from '../screens/Profile';
-import Category from '../screens/Category';
+import Home from '../components/screens/Home';
+import Profile from '../components/screens/Profile';
+import Category from '../components/screens/Category';
 import { StyleSheet } from 'react-native';
-import Test from '../screens/Test';
+import Test from '../components/screens/Test';
+import New from '../components/screens/New';
 
 
 const Tab = createBottomTabNavigator();
@@ -49,8 +50,7 @@ const ProtectedRoutes = () => {
         <Tab.Screen name="Home" component={Home}/>
         <Tab.Screen name="Category" component={Category}/>
         <Tab.Screen name="Test" component={Test}/>
-        {/*
-        <Tab.Screen name="Cart" component={Cart}/> */}
+        <Tab.Screen name="New" component={New}/>
         <Tab.Screen name="Profile" component={Profile}/>
       </Tab.Navigator>
   );

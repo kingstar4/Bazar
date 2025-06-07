@@ -4,3 +4,4 @@ export const getColorFromId = (id: string) => {
   const hash = Array.from(id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   return colors[hash % colors.length];
 };
+

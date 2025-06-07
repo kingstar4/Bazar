@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React from 'react';
-import slides from '../../data/slides';
+import slides from '../../components/data/slides';
 
 
 type FooterProps = {

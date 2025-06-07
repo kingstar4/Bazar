@@ -1,11 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, View,
+import {
+  StyleSheet,
+  View,
   Text,
   TextInput,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  Pressable} from 'react-native';
+  Pressable,
+} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useQuery } from '@tanstack/react-query';
@@ -14,7 +17,7 @@ import { fetchBooks } from '../../../api/bookApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FastImage from 'react-native-fast-image';
 import BottomModal from '../../customUI/BottomModal';
-import { getColorFromId } from '../../../hooks/getColorFromID';
+import { getColorFromId} from '../../../hooks/getColorFromID';
 
 type Props = {}
 
@@ -59,7 +62,7 @@ const Category = ({}: Props) => {
 
   });
 
-  const renderBook = ({ item }: { item: Book }) => {
+  const renderBook = ({ item}: { item: Book }) => {
       const { title } = item.volumeInfo;
       const sale = item.saleInfo;
       const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
@@ -76,23 +79,6 @@ const Category = ({}: Props) => {
     };
 
       return (
-
-          // <View style={styles.card}>
-          //   <Pressable onPress={()=>handleBookPress(item)} style={{alignItems:'center', justifyContent:'center'}}>
-          //     <FastImage
-          //       source={{
-          //         uri: imageUrl,
-          //         priority: FastImage.priority.normal,
-          //         cache: FastImage.cacheControl.immutable,
-          //       }}
-          //       style={{width:135, height:150}}
-          //       resizeMode={FastImage.resizeMode.contain}
-          //     />
-          //     <Text numberOfLines={2} style={styles.title}>{title}</Text>
-          //     <Text style={styles.price}>{priceDisplay}</Text>
-          //   </Pressable>
-          // </View>
-
           <View style={styles.bookList}>
             <Pressable onPress={()=>handleBookPress(item)} style={{alignItems:'center', justifyContent:'center'}}>
               <View style={[styles.cardBody, {backgroundColor: getColorFromId(item.id)}]}>
@@ -160,6 +146,11 @@ const Category = ({}: Props) => {
 
     return (
       <View style={styles.container}>
+        {/* <FastImage
+                    source={require('../../../../assets/img/')}
+                    style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
+                    resizeMode={FastImage.resizeMode.cover}
+                  /> */}
         <Text style={styles.headerTitle}>Categories</Text>
         <View style={styles.row}>
 
@@ -208,24 +199,10 @@ const Category = ({}: Props) => {
                 backgroundColor: '#f5f5f5',
                 minHeight: 40,
                 zIndex:-1,
-                // elevation: 1,
-                // shadowColor: '#000',
-                // shadowOffset: {
-                //   width: 0,
-                //   height: 2,
-                // },
-                // shadowOpacity: 0.1,
               }}
               dropDownContainerStyle={{
                 borderWidth: 0,
                 backgroundColor: '#f5f5f5',
-                // shadowColor: '#000',
-                // shadowOffset: {
-                //   width: 0,
-                //   height: 2,
-                // },
-                // shadowOpacity: 0.1,
-                // elevation: 2,
               }}
               textStyle={{
                 fontSize: 14,

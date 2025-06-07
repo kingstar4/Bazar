@@ -13,11 +13,13 @@ import { Book } from '../../../navigation/types';
 import Books from './Books';
 import Authors from './Authors';
 import { FlashList } from '@shopify/flash-list';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { ProtectedParamList } from '../../../navigation/types';
 // import CardUI from '../../customUI/CardUI';
-
 const {width} = Dimensions.get('window');
 
 const Home = () => {
+    const navigation = useNavigation <NavigationProp<ProtectedParamList>>();
     const [presentIndex, setPresentIndex] = React.useState(0);
     const ref = React.useRef<any>(null);
 
@@ -78,7 +80,7 @@ const Home = () => {
   return (
     <SafeAreaView style={{flex:1, paddingVertical:20, marginTop:20}}>
       <ScrollView>
-        <CustomMainHeader text="Home" icon="search-outline" icon2="notifications-outline"/>
+        <CustomMainHeader text="Home" icon="search" onPress={()=>{navigation.navigate('Category')}} icon2="bell"/>
 
         {carouselBooks && (
           <>
@@ -105,7 +107,7 @@ const Home = () => {
 
 
         {/* Books Section */}
-        {isLoading ? <ActivityIndicator size="large" color="#0000ff" style={{marginTop:20}}/> :
+        {isLoading ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
         <View style={styles.bookSection}>
           <CusHeaders text="Top of Week" text2="Show all" onPress={()=>{}}/>
           <FlashList
@@ -117,7 +119,7 @@ const Home = () => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        }
+         }
 
         {/* Vendors Section */}
         <View style={{paddingTop: 10, marginTop:30}}>
@@ -136,6 +138,7 @@ const Home = () => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
+       
       </ScrollView>
     </SafeAreaView>
   );

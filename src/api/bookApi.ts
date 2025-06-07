@@ -12,7 +12,7 @@ export const fetchBooks = async (searchTerm: string = ''): Promise<Book[]> => {
         q: query,                      // User input or fallback
         filter: 'free-ebooks',         // Free books only
         download: 'epub',              // EPUB available
-        country: 'NG',                 // Nigeria
+        // country: 'US',                 // Nigeria
         maxResults: 40,                 //Max allowed by Google Books API
       },
     });

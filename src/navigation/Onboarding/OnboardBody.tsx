@@ -2,23 +2,21 @@
 import {StatusBar, FlatList, Dimensions } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import slides from '../../data/slides';
+import slides from '../../components/data/slides';
 import Footer from './Footer';
 import Slide from './Slide';
-import { NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../../navigation/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-type OnboardBodyProps = {
-    navigation:  NavigationProp<RootStackParamList>;
-}
+// import { useNavigation } from '@react-navigation/native';
+// import { RootStackParamList } from '../types';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppStore } from '../../store/useAppStore';
 
 const { width } = Dimensions.get('window');
 const COLORS = {primary: '#282534', white:'#fff'};
 
 
-const OnboardBody = ({navigation}:OnboardBodyProps) => {
+const OnboardBody = () => {
+    //  const navigation = useNavigation();
+     const setOnboarded = useAppStore((state) => state.setOnboarded);
      const [currentIndex, setCurrentIndex] = React.useState(0);
       const ref = React.useRef<FlatList<any>>(null);
       // const horizontalScroll = React.useRef(new Animated.Value(0)).current;
@@ -40,12 +38,9 @@ const OnboardBody = ({navigation}:OnboardBodyProps) => {
 
      const skipFunction = async () => {
       try {
-        await AsyncStorage.setItem('hasLaunched', 'true');
-        navigation.navigate('PublicRoutes');
+        await setOnboarded();
       } catch (error) {
-        console.error('Error marking app as launched:', error);
-        // navigation.navigate('PublicRoutes');
-
+        console.error('Error marking app as onboarded:', error);
       }
      };
 

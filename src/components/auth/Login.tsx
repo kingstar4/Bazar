@@ -6,12 +6,12 @@ import React, { useState } from 'react';
 import CusButton from '../customUI/CusButton';
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, PublicRoutes } from '../../navigation/types'; // Adjust the path to your navigation types
-import { useAuthStore } from '../../store/useAuthStore';
+import { RootStackParamList, PublicStackParamList } from '../../navigation/types'; // Adjust the path to your navigation types
+// import { useAuthStore } from '../../store/useAuthStore';
 import Toast from 'react-native-toast-message';
 
 type LoginProps = {
-    navigation: NativeStackNavigationProp<PublicRoutes & RootStackParamList, 'Login'>;
+    navigation: NativeStackNavigationProp<PublicStackParamList & RootStackParamList, 'Login'>;
 }
 
 const Login = ({navigation}: LoginProps) => {
@@ -19,17 +19,19 @@ const Login = ({navigation}: LoginProps) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
-    const setUserDetails = useAuthStore((state) => state.setUserDetails);
+    // const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
+    // const setUserDetails = useAuthStore((state) => state.setUserDetails);
 
     const handleLogin = async()=>{
         try {
-            setLoading(true);
-            const userCredential = await auth().signInWithEmailAndPassword(email, password);
-            const user = userCredential.user;
-            // Store user details in Zustand store
-            setUserDetails(user.email, user.uid, user.displayName);
-            setAuthenticated(true);
+            // setLoading(true);
+            // const userCredential = await auth().signInWithEmailAndPassword(email, password);
+            // const user = userCredential.user;
+            // // Store user details in Zustand store
+            // setUserDetails(user.email, user.uid, user.displayName);
+            // setAuthenticated(true);
+            await auth().signInWithEmailAndPassword(email, password);
+
             Toast.show({
                 type: 'success',
                 text1: 'Login Successful',
@@ -104,7 +106,7 @@ const Login = ({navigation}: LoginProps) => {
             </View>
             <View style={{display:'flex', flexDirection:'row', alignItems:'center',alignSelf:'center', width:243, marginVertical:16, justifyContent:'center'}}>
                 <Text style={[styles.txt,{color:'#A6A6A6'}]}>Don't have an account? </Text>
-                <Text style={[styles.txt,{color:'#54408C'}]} onPress={()=>navigation.replace('Register')}> Sign Up</Text>
+                <Text style={[styles.txt,{color:'#54408C'}]} onPress={()=>navigation.replace('Register')}> Register</Text>
             </View>
             <View style={{display:'flex', flexDirection:'row', alignItems:'center', marginVertical:16, width:375, justifyContent:'space-between'}}>
                 <View style={styles.line} />

@@ -1,26 +1,28 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import Icons from 'react-native-vector-icons/Ionicons';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/types';
+// import Icons from 'react-native-vector-icons/Ionicons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+// import { useNavigation, NavigationProp } from '@react-navigation/native';
+// import { RootStackParamList } from '../../navigation/types';
 
 type CustomMainHeaderProps = {
     text: string;
     icon: string;
     icon2: string;
+    onPress?: () => void;
 }
 
-const CustomMainHeader = ({text, icon, icon2}: CustomMainHeaderProps) => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+const CustomMainHeader = ({text, icon, icon2, onPress}: CustomMainHeaderProps) => {
+  // const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.navigate('ProtectedRoutes', { screen: 'Category' } as any)}>
-          <Icons name={icon} size={30} />
+        <TouchableOpacity onPress={onPress}>
+          <FontAwesomeIcon name={icon} size={30} />
         </TouchableOpacity>
         <Text style={styles.mainTxt}>{text}</Text>
         <TouchableOpacity>
-          <Icons name={icon2} size={30} />
+          <FontAwesomeIcon name={icon2} size={30} />
         </TouchableOpacity>
     </View>
   );

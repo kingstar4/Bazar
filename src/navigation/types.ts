@@ -1,24 +1,108 @@
+// User profile type
+export interface User {
+  firstName: string;
+  lastName: string;
+  username: string;
+  bio: string;
+  location: string;
+  website: string;
+  joinDate: string;
+  followers: number;
+  following: number;
+  posts: number;
+  profileImage: string;
+  bannerImage: string;
+}
+
+// Timeline post type (for renderTimelinePost item parameter)
+export interface TimelinePost {
+  id: number;
+  content: string;
+  image?: string; // Optional image
+  likes: number;
+  comments: number;
+  time: string;
+}
+
+// Media post type (for renderMediaItem item parameter)
+export type MediaPost = string; // Just a URL string
+
+// Liked post type (for renderLikedPost item parameter)
+export interface LikedPost {
+  id: number;
+  user: string;
+  username: string;
+  content: string;
+  image?: string; // Optional image
+  likes: number;
+  time: string;
+}
+
+// Tab types
+export type TabType = 'Timeline' | 'Media' | 'Likes';
+
+// FlatList render item props types
+export interface TimelineRenderItemProps {
+  item: TimelinePost;
+  index: number;
+}
+
+export interface MediaRenderItemProps {
+  item: MediaPost;
+  index: number;
+}
+
+export interface LikedPostRenderItemProps {
+  item: LikedPost;
+  index: number;
+}
+
+export type TimelineData = TimelinePost[];
+export type MediaData = MediaPost[];
+export type LikedPostsData = LikedPost[];
+
+// Component props type (if you want to make this a reusable component)
+export interface ProfileScreenProps {
+  user?: User;
+  timelinePosts?: TimelineData;
+  mediaPosts?: MediaData;
+  likedPosts?: LikedPostsData;
+  onEditProfile?: () => void;
+  onFollow?: () => void;
+  onMessage?: () => void;
+  onBack?: () => void;
+}
+
+
+
+// src/types/navigation.ts
+
+// Root stack decides which flow to show (Onboarding, Auth, App)
 export type RootStackParamList = {
-    Onboarding: undefined;
-    RootNavigator: undefined;
-    PublicRoutes: undefined;
-    ProtectedRoutes: {
-        screen: string;
-        params?: object;
-    };
+  OnboardingStack: undefined;
+  PublicStack: undefined;
+  ProtectedStack: undefined;
 };
 
-export type ProtectedRoutes = {
-    Home: undefined;
-    Profile: undefined;
-    Category: undefined;
-    Cart: undefined;
+// Screens inside OnboardingStack
+export type OnboardingStackParamList = {
+  Onboarding: undefined;
 };
 
-export type PublicRoutes = {
-    Login: undefined;
-    Register: undefined;
+// Screens inside AuthStack (PublicRoutes)
+export type PublicStackParamList = {
+  Login: undefined;
+  Register: undefined;
 };
+
+// Screens inside AppStack (ProtectedRoutes)
+export type ProtectedParamList = {
+  Home: undefined;
+  Profile: undefined;
+  Category: undefined;
+  Cart: undefined;
+};
+
 
 export type AuthState = {
     isAuthenticated: boolean;

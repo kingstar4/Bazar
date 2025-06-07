@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'rea
 import React, { useState, useEffect } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useAuthStore } from '../../../store/useAuthStore';
-import CardUI from '../../customUI/CardUI';
+import ProfileCardUI from '../../customUI/ProfileCardUI';
 
 const Profile = () => {
   const { width } = Dimensions.get('window');
@@ -58,11 +58,11 @@ const Profile = () => {
         </TouchableOpacity>
       </View>
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
-        <CardUI text="My Account" iconName="person"/>
-        <CardUI text="Address" iconName="location-sharp"/>
-        <CardUI text="Order History" iconName="receipt"/>
-        <CardUI text="Favourite" iconName="heart"/>
-        <CardUI text="Help Center" iconName="chatbubble-ellipses"/>
+        <ProfileCardUI text="My Account" iconName="person"/>
+        <ProfileCardUI text="Address" iconName="location-sharp"/>
+        <ProfileCardUI text="Order History" iconName="receipt"/>
+        <ProfileCardUI text="Favourite" iconName="heart"/>
+        <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses"/>
 
       </View>
     </View>

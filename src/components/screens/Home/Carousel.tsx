@@ -32,7 +32,7 @@ const Carousel = ({item}: CarouselProps) => {
             {price}
           </Text>
           {price === 'FREE' ? '' : <CusButton
-            buttonStyle={{width:118, alignSelf:'flex-start', borderWidth:2, borderColor:'#fff', backgroundColor:'transparent'}}
+            buttonStyle={{width:118, alignSelf:'flex-start', borderWidth:2, borderColor:'#666', backgroundColor:'#54408C', elevation: 2}}
             text="Order Now"
             textStyle={{fontSize:14}}
             onPress={()=>{}}
