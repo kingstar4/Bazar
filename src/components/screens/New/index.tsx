@@ -1,18 +1,72 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
-import React, { useState } from 'react';
+// CategoryBottomSheet.tsx
+import React, { useRef, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  Button,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
+const New = () => {
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
-type Props = {}
+  const snapPoints = useMemo(() => ['40%', '70%'], []);
 
-const New = ({}: Props) => {
-  const [isON, setIsOn] = useState(false);
+  const [step, setStep] = useState<'main' | 'categories'>('main');
+
+  const handleOpenSheet = () => {
+    bottomSheetRef.current?.snapToIndex(0);
+    setStep('main');
+  };
+
+  const categories = ['Fiction', 'Romance', 'History', 'Science', 'Thriller'];
+
+  const renderMainMenu = () => (
+    <View style={styles.content}>
+      <TouchableOpacity style={styles.option} onPress={() => setStep('categories')}>
+        <Text style={styles.optionText}>📚 Categories</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.option}>
+        <Text style={styles.optionText}>🔤 A – Z</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderCategories = () => (
+    <View style={styles.content}>
+      <TouchableOpacity onPress={() => setStep('main')}>
+        <Text style={styles.backText}>← Back</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <View style={styles.categoryItem}>
+            <Text style={styles.categoryText}>{item}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
 
   return (
-    <View style={[styles.container, {backgroundColor: isON? 'green': 'red'}]}>
-      <View>
-        <Text style={styles.txt}>{isON ? 'Turned On' : 'Turned Off'}</Text>
-        <Button title={isON ? 'Off' : 'On'} onPress={()=>setIsOn(!isON)}/>
-      </View>
+    <View style={styles.container}>
+      <Button title="Open Bottom Sheet" onPress={handleOpenSheet} />
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        enablePanDownToClose={true}
+      >
+        <BottomSheetView>
+          {step === 'main' ? renderMainMenu() : renderCategories()}
+        </BottomSheetView>
+      </BottomSheet>
     </View>
   );
 };
@@ -20,15 +74,34 @@ const New = ({}: Props) => {
 export default New;
 
 const styles = StyleSheet.create({
-  container:{
-    display: 'flex',
-    flexDirection:'column',
-    alignItems:'center',
-    justifyContent:'center',
-    alignSelf:'center',
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
   },
-  txt:{
-    fontWeight:'bold',
-    fontSize:40,
+  content: {
+    padding: 20,
+  },
+  option: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: '#f1f1f1',
+    marginBottom: 10,
+  },
+  optionText: {
+    fontSize: 18,
+  },
+  backText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#007AFF',
+  },
+  categoryItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  categoryText: {
+    fontSize: 16,
   },
 });

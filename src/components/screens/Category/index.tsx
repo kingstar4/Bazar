@@ -9,8 +9,7 @@ import {
   ActivityIndicator,
   Pressable,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import DropDownPicker from 'react-native-dropdown-picker';
+import React, {useState, useEffect, useMemo} from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Book } from '../../../navigation/types';
 import { fetchBooks } from '../../../api/bookApi';
@@ -18,21 +17,19 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FastImage from 'react-native-fast-image';
 import BottomModal from '../../customUI/BottomModal';
 import { getColorFromId} from '../../../hooks/getColorFromID';
+import BottomSheetFilter from '../../customUI/BottomSheetFilter';
 
 type Props = {}
 
-const categories = [
-  'Fiction', 'Science', 'History', 'Romance', 'Technology',
-  'Children', 'Health', 'Education', 'Business', 'Cooking',
-];
 
 const Category = ({}: Props) => {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('fiction');
-  const [openDropdown, setOpenDropdown] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isopen, setIsOpen] = useState(false);
+  const [sortAZ, setSortAZ] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -62,6 +59,7 @@ const Category = ({}: Props) => {
 
   });
 
+  // Component carrying book card details
   const renderBook = ({ item}: { item: Book }) => {
       const { title } = item.volumeInfo;
       const sale = item.saleInfo;
@@ -107,6 +105,7 @@ const Category = ({}: Props) => {
       );
     };
 
+    // Function for Empty States
     const renderEmptyState = () => {
       if (isError) {
         if (error instanceof Error) {
@@ -144,14 +143,36 @@ const Category = ({}: Props) => {
       );
     };
 
+    const handleCategorySelection = (category: string)=>{
+      setSelectedCategory(category);
+      setIsOpen(false);
+    };
+
+    const handleSortAZ = () =>{
+      setSortAZ(true);
+      setIsOpen(false);
+    };
+
+    const sortedData = useMemo(()=>{
+      if (!sortAZ) {return data;}
+      return [...data].sort((a,b) => {
+        const titleA = a.volumeInfo.title.toUpperCase();
+        const titleB = b.volumeInfo.title.toUpperCase();
+        return titleA.localeCompare(titleB);
+    });
+    },[data, sortAZ]);
+
     return (
       <View style={styles.container}>
-        {/* <FastImage
-                    source={require('../../../../assets/img/')}
-                    style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
-                    resizeMode={FastImage.resizeMode.cover}
-                  /> */}
-        <Text style={styles.headerTitle}>Categories</Text>
+
+        <View style={styles.row}>
+          <Text style={styles.headerTitle}>Categories</Text>
+
+          <TouchableOpacity onPress={()=> setIsOpen(true)} style={{padding: 8, borderRadius: 8, backgroundColor: '#f5f5f5', elevation: 1, shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.1}}>
+            <Ionicons name="filter" size={24} color="#333" />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.row}>
 
           <View style={styles.searchContainer}>
@@ -178,38 +199,7 @@ const Category = ({}: Props) => {
           )}
         </View>
 
-        {/*Filter for Categories  */}
-        <View style={styles.filterContainer}>
-            <DropDownPicker
-              open={openDropdown}
-              value={selectedCategory}
-              items={categories.map((catName) => ({ label: catName, value: catName }))}
-              setOpen={setOpenDropdown}
-              setValue={setSelectedCategory}
-              onChangeValue={(value) => {
-                  setSelectedCategory(value || 'fiction');
-              }}
-              placeholder="Categories"
-              containerStyle={{ width: '40%'}}
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                borderWidth: 1,
-                borderColor: '#ddd',
-                backgroundColor: '#f5f5f5',
-                minHeight: 40,
-                zIndex:-1,
-              }}
-              dropDownContainerStyle={{
-                borderWidth: 0,
-                backgroundColor: '#f5f5f5',
-              }}
-              textStyle={{
-                fontSize: 14,
-                color: '#333',
-              }}
-            />
-        </View>
+
 
         {isFetching ? (
           <ActivityIndicator size="large" color="#333" style={{ marginVertical: 20 }} />
@@ -217,7 +207,7 @@ const Category = ({}: Props) => {
           renderEmptyState()
         ) : (
           <FlatList
-            data={(data ?? []) as Book[]}
+            data={sortedData}
             keyExtractor={(item) => item.id}
             renderItem={renderBook}
             numColumns={2}
@@ -229,6 +219,7 @@ const Category = ({}: Props) => {
         {selectedBook && isModalVisible && (
           <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
         )}
+        <BottomSheetFilter visible={isopen} onClose={()=> setIsOpen(false)} onCategorySelect={handleCategorySelection} onSortAZ={handleSortAZ}/>
       </View>
     );
 };
@@ -304,6 +295,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 16,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   image: {
     width: 100,
