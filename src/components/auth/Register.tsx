@@ -44,14 +44,12 @@ const Register = ({navigation}: RegisterProps) => {
                 });
                 return;
             }
-
-            await auth().createUserWithEmailAndPassword(email, password);
-            await firestore().collection('UserDetails')
-            .add({
-                name,
-                email,
-                phone,
-                createdAt: firestore.FieldValue.serverTimestamp(),
+            const { user } = await auth().createUserWithEmailAndPassword(email, password);
+            await firestore().collection('users').doc(user.uid).set({
+            name,
+            email,
+            phone,
+            createdAt: firestore.FieldValue.serverTimestamp(),
             });
             console.log('Registration Successful');
             Toast.show({

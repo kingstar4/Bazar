@@ -75,7 +75,7 @@ const DownloadExample: React.FC<DownloadExampleProps> = ({ book }) => {
       setIsDownloading(false);
     }
   };
-  
+
   // Handle download and open
   const handleDownloadAndOpen = async (url: string, format: string) => {
     if (!url) {
@@ -86,10 +86,10 @@ const DownloadExample: React.FC<DownloadExampleProps> = ({ book }) => {
       });
       return;
     }
-    
+
     try {
       setIsDownloading(true);
-      
+
       // Download and open the file (always uses app storage for better compatibility)
       await downloadAndOpenFile(url, `${title} - ${format}`, true);
     } catch (error) {
@@ -99,7 +99,6 @@ const DownloadExample: React.FC<DownloadExampleProps> = ({ book }) => {
       setIsDownloading(false);
     }
   };
-  
   // Show storage location info
   const showStorageInfo = () => {
     Alert.alert(
@@ -110,7 +109,7 @@ const DownloadExample: React.FC<DownloadExampleProps> = ({ book }) => {
       [{ text: 'OK' }]
     );
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -119,7 +118,7 @@ const DownloadExample: React.FC<DownloadExampleProps> = ({ book }) => {
           <Ionicons name="information-circle-outline" size={24} color="#54408C" />
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.storageToggle}>
         <Text style={styles.storageText}>Use App Storage</Text>
         <Switch

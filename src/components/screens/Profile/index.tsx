@@ -1,18 +1,20 @@
 /* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { useAuthStore } from '../../../store/useAuthStore';
+import { useAppStore } from '../../../store/useAppStore';
 import ProfileCardUI from '../../customUI/ProfileCardUI';
+import { ActivityIndicator } from 'react-native';
 
 const Profile = () => {
   const { width } = Dimensions.get('window');
   const [avatar, setAvatar] = useState<string | null>(null);
-  const { userEmail, logout } = useAuthStore();
+  const { logout } = useAppStore();
+  const user = useAppStore((state)=> state.user);
 
   useEffect(() => {
-    console.log('Current user email:', userEmail);
-  }, [userEmail]);
+  console.log('🧠 Zustand user:', user);
+}, [user]);
 
   const pickImage = async () => {
     const result = await launchImageLibrary({
@@ -26,9 +28,9 @@ const Profile = () => {
     }
   };
 
-  const truncateEmail = (email: string) => {
-    return email.length > 25 ? `${email.substring(0, 22)}...` : email;
-  };
+  // const truncateEmail = (email: string) => {
+  //   return email.length > 25 ? `${email.substring(0, 22)}...` : email;
+  // };
 
   return (
     <View style={styles.container}>
@@ -46,12 +48,16 @@ const Profile = () => {
               </View>
             )}
             </TouchableOpacity>
-          <View style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 20 }}>
+
+          {user ?
+            (<View style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 20 }}>
             <Text style={styles.email}>
-              {userEmail ? truncateEmail(userEmail) : 'No email'}
+              {user.name}
             </Text>
-            <Text>(+1) 234 567 890</Text>
-          </View>
+            <Text>{user.phone}</Text>
+          </View>)
+          : <ActivityIndicator size="large" color="#54408C" style={{alignSelf:'center', marginVertical:16}}/>
+        }
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutText}>Logout</Text>

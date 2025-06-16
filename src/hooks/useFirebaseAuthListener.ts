@@ -1,6 +1,5 @@
-
-import { useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
+import { useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 
 export const useFirebaseAuthListener = () => {
@@ -8,15 +7,20 @@ export const useFirebaseAuthListener = () => {
   const logout = useAppStore((state) => state.logout);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        login(token); // saves token and updates isAuthenticated
+    const unsubscribe = auth().onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        const token = await firebaseUser.getIdToken();
+        const uid = firebaseUser.uid;
+
+        console.log('User signed in → calling login with uid:', uid);
+
+        await login(token, uid);
       } else {
-        logout(); // removes token and updates isAuthenticated
+        console.log('User signed out → calling logout');
+        await logout();
       }
     });
 
-    return () => unsubscribe();
+    return unsubscribe;
   }, [login, logout]);
 };

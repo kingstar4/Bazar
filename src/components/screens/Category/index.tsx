@@ -10,7 +10,7 @@ import {
   Pressable,
 } from 'react-native';
 import React, {useState, useEffect, useMemo} from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Book } from '../../../navigation/types';
 import { fetchBooks } from '../../../api/bookApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -52,12 +52,25 @@ const Category = ({}: Props) => {
   // Use debounced search term for the query
   const activeQuery = debouncedSearch ? debouncedSearch : `subject:${selectedCategory}`;
 
-  const { data = [], isFetching, error, isError } = useQuery<Book[], Error>({
-      queryKey: ['books', activeQuery],
-      queryFn: () => fetchBooks(activeQuery),
-      staleTime: 1000 * 60 * 5, // 5 minutes cache
+const {
+  data,
+  isFetching,
+  isFetchingNextPage,
+  fetchNextPage,
+  hasNextPage,
+  error,
+  isError,
+} = useInfiniteQuery({
+  queryKey: ['books', activeQuery],
+  queryFn: ({ pageParam = 0 }) => fetchBooks(activeQuery, pageParam),
+   initialPageParam: 0,
+  getNextPageParam: (lastPage) => lastPage.nextPage,
+  staleTime: 1000 * 60 * 5,
+});
 
-  });
+const books = useMemo(() => {
+  return data?.pages.flatMap((page) => page.items) || [];
+}, [data]);
 
   // Component carrying book card details
   const renderBook = ({ item}: { item: Book }) => {
@@ -153,14 +166,13 @@ const Category = ({}: Props) => {
       setIsOpen(false);
     };
 
-    const sortedData = useMemo(()=>{
-      if (!sortAZ) {return data;}
-      return [...data].sort((a,b) => {
-        const titleA = a.volumeInfo.title.toUpperCase();
-        const titleB = b.volumeInfo.title.toUpperCase();
-        return titleA.localeCompare(titleB);
-    });
-    },[data, sortAZ]);
+    const sortedData = useMemo(() => {
+  if (!sortAZ) {return books;}
+  return [...books].sort((a, b) =>
+    a.volumeInfo.title.toUpperCase().localeCompare(b.volumeInfo.title.toUpperCase())
+  );
+}, [books, sortAZ]);
+
 
     return (
       <View style={styles.container}>
@@ -201,21 +213,33 @@ const Category = ({}: Props) => {
 
 
 
-        {isFetching ? (
-          <ActivityIndicator size="large" color="#333" style={{ marginVertical: 20 }} />
-        ) : !data.length ? (
-          renderEmptyState()
-        ) : (
-          <FlatList
-            data={sortedData}
-            keyExtractor={(item) => item.id}
-            renderItem={renderBook}
-            numColumns={2}
-            columnWrapperStyle={{ justifyContent: 'space-between' }}
-            contentContainerStyle={styles.list}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
+        {isFetching && !isFetchingNextPage && !data ? (
+            <ActivityIndicator size="large" color="#54408C" style={{ marginVertical: 20 }} />
+          ) : books.length === 0 ? (
+            renderEmptyState()
+          ) : (
+            <FlatList
+              data={sortedData}
+              keyExtractor={(item) => item.id}
+              renderItem={renderBook}
+              numColumns={2}
+              columnWrapperStyle={{ justifyContent: 'space-between' }}
+              contentContainerStyle={styles.list}
+              showsVerticalScrollIndicator={false}
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={
+                isFetchingNextPage ? (
+                  <ActivityIndicator size="small" color="#333" style={{ marginVertical: 20 }} />
+                ) : null
+              }
+            />
+          )}
+
         {selectedBook && isModalVisible && (
           <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
         )}

@@ -9,6 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, PublicStackParamList } from '../../navigation/types'; // Adjust the path to your navigation types
 // import { useAuthStore } from '../../store/useAuthStore';
 import Toast from 'react-native-toast-message';
+import { useAppStore } from '../../store/useAppStore';
 
 type LoginProps = {
     navigation: NativeStackNavigationProp<PublicStackParamList & RootStackParamList, 'Login'>;
@@ -19,10 +20,12 @@ const Login = ({navigation}: LoginProps) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+
     // const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
     // const setUserDetails = useAuthStore((state) => state.setUserDetails);
 
     const handleLogin = async()=>{
+        const {login} = useAppStore.getState();
         try {
             // setLoading(true);
             // const userCredential = await auth().signInWithEmailAndPassword(email, password);
@@ -30,7 +33,11 @@ const Login = ({navigation}: LoginProps) => {
             // // Store user details in Zustand store
             // setUserDetails(user.email, user.uid, user.displayName);
             // setAuthenticated(true);
-            await auth().signInWithEmailAndPassword(email, password);
+            const userCredential = await auth().signInWithEmailAndPassword(email, password);
+            const token = await userCredential.user.getIdToken();
+            const uid = userCredential.user.uid;
+
+            await login(token, uid);
 
             Toast.show({
                 type: 'success',

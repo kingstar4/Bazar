@@ -18,11 +18,11 @@ const CustomMainHeader = ({text, icon, icon2, onPress}: CustomMainHeaderProps) =
   return (
     <View style={styles.container}>
         <TouchableOpacity onPress={onPress}>
-          <FontAwesomeIcon name={icon} size={30} />
+          <FontAwesomeIcon name={icon} size={20} />
         </TouchableOpacity>
         <Text style={styles.mainTxt}>{text}</Text>
         <TouchableOpacity>
-          <FontAwesomeIcon name={icon2} size={30} />
+          <FontAwesomeIcon name={icon2} size={20} />
         </TouchableOpacity>
     </View>
   );

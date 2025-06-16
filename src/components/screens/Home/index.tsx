@@ -8,7 +8,7 @@ import { vendors } from '../../data/dataTables';
 import Vendors from './Vendors';
 import { ScrollEvent } from '../../../navigation/types';
 import { useQuery } from '@tanstack/react-query';
-import { fetchBooks } from '../../../api/bookApi';
+import { fetchHomeBooks } from '../../../api/bookApi';
 import { Book } from '../../../navigation/types';
 import Books from './Books';
 import Authors from './Authors';
@@ -26,14 +26,14 @@ const Home = () => {
     const {data: carouselBooks} = useQuery<Book[]>({
       queryKey: ['carouselBooks'],
       queryFn: async () => {
-        const books = await fetchBooks('featured books');
+        const books = await fetchHomeBooks('trending');
         return books.slice(0, 4); // Limit to first 4 books
       },
     });
 
     const {data: topbooks, isLoading} = useQuery<Book[]>({
       queryKey:['topbooks'],
-      queryFn: ()=>fetchBooks('best sellers'),
+      queryFn: ()=>fetchHomeBooks('best sellers'),
     });
 
     useEffect(() => {
@@ -109,7 +109,7 @@ const Home = () => {
         {/* Books Section */}
         {isLoading ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
         <View style={styles.bookSection}>
-          <CusHeaders text="Top of Week" text2="Show all" onPress={()=>{}}/>
+          <CusHeaders text="Top of Week"  />
           <FlashList
             data={topbooks}
             renderItem={Books}
@@ -123,13 +123,13 @@ const Home = () => {
 
         {/* Vendors Section */}
         <View style={{paddingTop: 10, marginTop:30}}>
-          <CusHeaders text="Best Vendors" text2="Show all" onPress={()=>{}}/>
+          <CusHeaders text="Best Vendors" />
           <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/>
         </View>
 
         {/* Authors Section */}
         <View style={{paddingBottom: 70}}>
-          <CusHeaders text="Authors" text2="See all" onPress={()=>{}}/>
+          <CusHeaders text="Authors"/>
           <FlatList
             data={topbooks?.filter(book => book.volumeInfo.authors && book.volumeInfo.authors.length > 0)}
             renderItem={Authors}
@@ -138,7 +138,6 @@ const Home = () => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-       
       </ScrollView>
     </SafeAreaView>
   );

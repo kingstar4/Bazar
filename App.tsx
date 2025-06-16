@@ -12,7 +12,7 @@ const queryCLient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryCLient}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1}}>
         <RootNavigator />
         <Toast/>
       </GestureHandlerRootView>
