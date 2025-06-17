@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import CusButton from '../customUI/CusButton';
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, PublicStackParamList } from '../../navigation/types'; // Adjust the path to your navigation types
+import { RootStackParamList, PublicStackParamList } from '../../utils/types'; // Adjust the path to your navigation types
 // import { useAuthStore } from '../../store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import { useAppStore } from '../../store/useAppStore';
@@ -21,18 +21,9 @@ const Login = ({navigation}: LoginProps) => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
-    // const setUserDetails = useAuthStore((state) => state.setUserDetails);
-
     const handleLogin = async()=>{
         const {login} = useAppStore.getState();
         try {
-            // setLoading(true);
-            // const userCredential = await auth().signInWithEmailAndPassword(email, password);
-            // const user = userCredential.user;
-            // // Store user details in Zustand store
-            // setUserDetails(user.email, user.uid, user.displayName);
-            // setAuthenticated(true);
             const userCredential = await auth().signInWithEmailAndPassword(email, password);
             const token = await userCredential.user.getIdToken();
             const uid = userCredential.user.uid;

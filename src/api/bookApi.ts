@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Book } from '../navigation/types';
+import { Book } from '../utils/types';
 
 const BASE_URL = 'https://www.googleapis.com/books/v1/volumes';
 

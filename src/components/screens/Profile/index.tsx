@@ -65,8 +65,6 @@ const Profile = () => {
       </View>
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
         <ProfileCardUI text="My Account" iconName="person"/>
-        <ProfileCardUI text="Address" iconName="location-sharp"/>
-        <ProfileCardUI text="Order History" iconName="receipt"/>
         <ProfileCardUI text="Favourite" iconName="heart"/>
         <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses"/>
 

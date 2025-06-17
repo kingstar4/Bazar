@@ -7,10 +7,10 @@ import Icons from 'react-native-vector-icons/Ionicons';
 import CusButton from '../customUI/CusButton';
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { PublicStackParamList } from '../../navigation/types';
+import { PublicStackParamList } from '../../utils/types';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
-import { validatePass } from '../../hooks/validatePass';
+import { validatePass } from '../../utils/validatePass';
 
 type RegisterProps = {
     navigation: NativeStackNavigationProp<PublicStackParamList, 'Register'>;

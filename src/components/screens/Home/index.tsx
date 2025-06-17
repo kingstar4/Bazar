@@ -6,15 +6,18 @@ import Carousel from './Carousel';
 import CustomMainHeader from '../../customUI/CustomMainHeader';
 import { vendors } from '../../data/dataTables';
 import Vendors from './Vendors';
-import { ScrollEvent } from '../../../navigation/types';
+import { ScrollEvent } from '../../../utils/types';
 import { useQuery } from '@tanstack/react-query';
 import { fetchHomeBooks } from '../../../api/bookApi';
-import { Book } from '../../../navigation/types';
-import Books from './Books';
+import { Book } from '../../../utils/types';
 import Authors from './Authors';
 import { FlashList } from '@shopify/flash-list';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { ProtectedParamList } from '../../../navigation/types';
+import { ProtectedParamList } from '../../../utils/types';
+import BottomModal from '../../customUI/BottomModal';
+import { useAppStore } from '../../../store/useAppStore';
+import CardUI from '../../customUI/CardUI';
+
 // import CardUI from '../../customUI/CardUI';
 const {width} = Dimensions.get('window');
 
@@ -22,6 +25,9 @@ const Home = () => {
     const navigation = useNavigation <NavigationProp<ProtectedParamList>>();
     const [presentIndex, setPresentIndex] = React.useState(0);
     const ref = React.useRef<any>(null);
+
+    // Global Zustand State
+    const {selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
 
     const {data: carouselBooks} = useQuery<Book[]>({
       queryKey: ['carouselBooks'],
@@ -36,6 +42,10 @@ const Home = () => {
       queryFn: ()=>fetchHomeBooks('best sellers'),
     });
 
+    const handleBookPress = (book: Book) => {
+            setSelectedBook(book);
+            setIsModalVisible(true);
+    };
     useEffect(() => {
         const interval = setInterval(() => {
             if (carouselBooks) {
@@ -86,7 +96,7 @@ const Home = () => {
           <>
             <FlatList
               data={carouselBooks}
-              renderItem={({item}) => <Carousel item={item} />}
+              renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>}
               onScroll={scroll}
               ref={ref}
               keyExtractor={(item) => item.id}
@@ -112,7 +122,7 @@ const Home = () => {
           <CusHeaders text="Top of Week"  />
           <FlashList
             data={topbooks}
-            renderItem={Books}
+            renderItem={({ item }) => <CardUI item={item} onPress={handleBookPress} />}
             horizontal
             estimatedItemSize={140}
             contentContainerStyle={styles.flashListContainer}
@@ -131,14 +141,18 @@ const Home = () => {
         <View style={{paddingBottom: 70}}>
           <CusHeaders text="Authors"/>
           <FlatList
-            data={topbooks?.filter(book => book.volumeInfo.authors && book.volumeInfo.authors.length > 0)}
+            data={topbooks?.slice(0,5)}
             renderItem={Authors}
-            horizontal
+            scrollEnabled={false}
             keyExtractor={(item)=>item.id}
             showsHorizontalScrollIndicator={false}
+            initialNumToRender={4}
           />
         </View>
       </ScrollView>
+       {selectedBook && isModalVisible && (
+          <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
+        )}
     </SafeAreaView>
   );
 };

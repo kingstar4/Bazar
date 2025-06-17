@@ -9,7 +9,7 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
-import { Book } from '../../navigation/types';
+import { Book } from '../../utils/types';
 import FastImage from 'react-native-fast-image';
 import CusButton from './CusButton';
 import { downloadFile, downloadAndOpenFile } from '../../hooks/handleDownload';
@@ -40,7 +40,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   // Open Bottom sheet Modal when visible becomes true
   useEffect(() => {
     if (visible) {
-      bottomSheetRef.current?.expand();
+      bottomSheetRef.current?.snapToIndex(0);
     } else {
       bottomSheetRef.current?.close();
     }
@@ -92,7 +92,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
       handleStyle={styles.handleStyle}
       backgroundStyle={styles.sheetBackground}
       snapPoints={snapPoints}
-      index={1}
+      index={0}
       ref={bottomSheetRef}
       enablePanDownToClose={true}
       onClose={handleClose}
@@ -418,6 +418,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#333',
     marginBottom: 4,
+    lineHeight:25,
   },
   authorText: {
     fontSize: 14,

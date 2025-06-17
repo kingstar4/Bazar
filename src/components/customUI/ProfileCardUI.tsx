@@ -4,12 +4,12 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-type CardUIProps = {
+type ProfileCardUIProps = {
     text: string;
     iconName: string;
 }
 
-const CardUI = ({text, iconName }: CardUIProps) => {
+const ProfileCardUI = ({text, iconName }: ProfileCardUIProps) => {
   return (
     <TouchableOpacity>
         <View style={styles.cardContainer}>
@@ -27,7 +27,7 @@ const CardUI = ({text, iconName }: CardUIProps) => {
   );
 };
 
-export default CardUI;
+export default ProfileCardUI;
 
 const styles = StyleSheet.create({
     cardContainer:{

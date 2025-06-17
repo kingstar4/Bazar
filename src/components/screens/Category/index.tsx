@@ -7,17 +7,15 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  Pressable,
 } from 'react-native';
 import React, {useState, useEffect, useMemo} from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Book } from '../../../navigation/types';
+import { Book } from '../../../utils/types';
 import { fetchBooks } from '../../../api/bookApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import FastImage from 'react-native-fast-image';
 import BottomModal from '../../customUI/BottomModal';
-import { getColorFromId} from '../../../hooks/getColorFromID';
 import BottomSheetFilter from '../../customUI/BottomSheetFilter';
+import CardUI from '../../customUI/CardUI';
 
 type Props = {}
 
@@ -73,50 +71,50 @@ const books = useMemo(() => {
 }, [data]);
 
   // Component carrying book card details
-  const renderBook = ({ item}: { item: Book }) => {
-      const { title } = item.volumeInfo;
-      const sale = item.saleInfo;
-      const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
+  // const renderBook = ({ item}: { item: Book }) => {
+  //     const { title } = item.volumeInfo;
+  //     const sale = item.saleInfo;
+  //     const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
 
-      const getPriceText = () => {
-      if (sale?.saleability === 'FOR_SALE') {
-        if (sale?.retailPrice) {
-          return `${sale?.retailPrice.amount.toFixed(2)} ${sale?.retailPrice.currencyCode}`;
-        } else if (sale?.listPrice) {
-          return `${sale?.listPrice.amount.toFixed(2)} ${sale?.listPrice.currencyCode}`;
-        }
-      }
-      return sale?.saleability === 'FREE' ? 'Free' : 'Not for Sale';
-    };
+  //     const getPriceText = () => {
+  //     if (sale?.saleability === 'FOR_SALE') {
+  //       if (sale?.retailPrice) {
+  //         return `${sale?.retailPrice.amount.toFixed(2)} ${sale?.retailPrice.currencyCode}`;
+  //       } else if (sale?.listPrice) {
+  //         return `${sale?.listPrice.amount.toFixed(2)} ${sale?.listPrice.currencyCode}`;
+  //       }
+  //     }
+  //     return sale?.saleability === 'FREE' ? 'Free' : 'Not for Sale';
+  //   };
 
-      return (
-          <View style={styles.bookList}>
-            <Pressable onPress={()=>handleBookPress(item)} style={{alignItems:'center', justifyContent:'center'}}>
-              <View style={[styles.cardBody, {backgroundColor: getColorFromId(item.id)}]}>
-                <View style={{marginBottom:60,  width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', elevation:6, borderRadius:12, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0, height:2}, shadowOpacity:0.25, shadowRadius:3.84, backgroundColor:'#fff'}}>
-                  <FastImage
-                    source={{
-                      uri: imageUrl,
-                      priority: FastImage.priority.normal,
-                    }}
-                    style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                </View>
-              </View>
+  //     return (
+  //         <View style={styles.bookList}>
+  //           <Pressable onPress={()=>handleBookPress(item)} style={{alignItems:'center', justifyContent:'center'}}>
+  //             <View style={[styles.cardBody, {backgroundColor: getColorFromId(item.id)}]}>
+  //               <View style={{marginBottom:60,  width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', elevation:6, borderRadius:12, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0, height:2}, shadowOpacity:0.25, shadowRadius:3.84, backgroundColor:'#fff'}}>
+  //                 <FastImage
+  //                   source={{
+  //                     uri: imageUrl,
+  //                     priority: FastImage.priority.normal,
+  //                   }}
+  //                   style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
+  //                   resizeMode={FastImage.resizeMode.cover}
+  //                 />
+  //               </View>
+  //             </View>
 
-              <View style={{paddingHorizontal: 8, paddingVertical: 4, display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'transparent'}}>
-                <Text style={{textAlign:'center', fontWeight:700}} numberOfLines={1}>
-                  {title}
-                </Text>
-                <Text style={{textAlign:'center'}} numberOfLines={1}>
-                  {getPriceText()}
-                </Text>
-              </View>
-          </Pressable>
-      </View>
-      );
-    };
+  //             <View style={{paddingHorizontal: 8, paddingVertical: 4, display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'transparent'}}>
+  //               <Text style={{textAlign:'center', fontWeight:700}} numberOfLines={1}>
+  //                 {title}
+  //               </Text>
+  //               <Text style={{textAlign:'center'}} numberOfLines={1}>
+  //                 {getPriceText()}
+  //               </Text>
+  //             </View>
+  //         </Pressable>
+  //     </View>
+  //     );
+  //   };
 
     // Function for Empty States
     const renderEmptyState = () => {
@@ -221,7 +219,7 @@ const books = useMemo(() => {
             <FlatList
               data={sortedData}
               keyExtractor={(item) => item.id}
-              renderItem={renderBook}
+              renderItem={({item})=> <CardUI item={item} onPress={handleBookPress}/>}
               numColumns={2}
               columnWrapperStyle={{ justifyContent: 'space-between' }}
               contentContainerStyle={styles.list}

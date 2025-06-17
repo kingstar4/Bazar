@@ -180,19 +180,19 @@ const getDownloadDirectory = async (useExternalStorage: boolean = true): Promise
  * @returns Promise resolving to the path where the file was saved
  */
 export const downloadFile = async (
-  url: string, 
-  fileName: string, 
+  url: string,
+  fileName: string,
   customPath?: string,
   forceAppStorage: boolean = false
 ): Promise<string> => {
   try {
     // Determine file extension from URL
     const fileExtension = url.toLowerCase().endsWith('.pdf') 
-      ? '.pdf' 
-      : url.toLowerCase().endsWith('.epub') 
-        ? '.epub' 
-        : url.includes('pdf') 
-          ? '.pdf' 
+      ? '.pdf'
+      : url.toLowerCase().endsWith('.epub')
+        ? '.epub'
+        : url.includes('pdf')
+          ? '.pdf'
           : '.epub';
 
     // Clean the filename to avoid invalid characters
@@ -341,7 +341,7 @@ const performDownload = async (
 export const downloadAndOpenFile = async (
   url: string,
   fileName: string,
-  forceAppStorage: boolean = false
+  // forceAppStorage: boolean = false
 ): Promise<void> => {
   try {
     // Always use app storage for files that will be opened immediately
@@ -398,7 +398,7 @@ export const getFileInfo = async (filePath: string) => {
   try {
     const stats = await RNFS.stat(filePath);
     return {
-      exists: stats.exists,
+      exists: true,
       size: stats.size,
       name: filePath.split('/').pop(),
       path: filePath,

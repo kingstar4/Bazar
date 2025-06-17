@@ -12,7 +12,7 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MediaRenderItemProps, TimelineRenderItemProps, LikedPostRenderItemProps } from '../../../navigation/types';
+import { MediaRenderItemProps, TimelineRenderItemProps, LikedPostRenderItemProps } from '../../../utils/types';
 
 // Mock icons - in a real app you'd use react-native-vector-icons or similar
 const ArrowBackIcon = () => <Text style={styles.icon}>←</Text>;

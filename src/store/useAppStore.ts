@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import { Book } from '../utils/types';
 
 type User = {
   uid: string;
@@ -20,6 +21,13 @@ type AppState = {
   login: (token: string, uid:string) => Promise<void>;
   setUser: (user: User) => void;
   logout: () => Promise<void>;
+
+  // For Opening the bottom sheet
+  isModalVisible: boolean;
+  selectedBook: Book | null;
+  setIsModalVisible: (visible:boolean)=>void
+  setSelectedBook: (book: Book | null)=> void
+  reset: ()=> void
 };
 
 export const useAppStore = create<AppState>((set) => ({
@@ -27,6 +35,9 @@ export const useAppStore = create<AppState>((set) => ({
   isOnboarded: false,
   isAuthenticated: false,
   user: null,
+  isModalVisible:false,
+  selectedBook: null,
+
   // Run once when app launches
   initApp: async () => {
     try {
@@ -87,4 +98,10 @@ export const useAppStore = create<AppState>((set) => ({
     AsyncStorage.setItem('userInfo', JSON.stringify(user));
     set({ user });
   },
+
+  setIsModalVisible: (visible)=> set({isModalVisible: visible}),
+  setSelectedBook: (book)=> set({selectedBook: book}),
+
+  reset: ()=> set({isModalVisible: false, selectedBook: null}),
+
 }));

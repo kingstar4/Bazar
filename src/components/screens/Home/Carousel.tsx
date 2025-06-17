@@ -3,14 +3,15 @@ import { Text, View, Dimensions, StyleSheet } from 'react-native';
 import React from 'react';
 import FastImage from 'react-native-fast-image';
 import CusButton from '../../customUI/CusButton';
-import { Book } from '../../../navigation/types';
+import { Book } from '../../../utils/types';
 
 type CarouselProps = {
     item: Book;
+    onPress: (book: Book)=> void;
 }
 
 const {width} = Dimensions.get('window');
-const Carousel = ({item}: CarouselProps) => {
+const Carousel = ({item, onPress}: CarouselProps) => {
   const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
   const price = item.saleInfo?.listPrice?.amount
     ? `$${item.saleInfo.listPrice.amount}`
@@ -37,7 +38,7 @@ const Carousel = ({item}: CarouselProps) => {
             buttonStyle={{width:118, alignSelf:'flex-start', backgroundColor: '#fff', elevation: 2}}
             text="View"
             textStyle={{fontSize:14, color:'#000'}}
-            onPress={()=>{}}
+            onPress={()=>onPress(item)}
           />}
         </View>
         <View style={{ elevation: 5, shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.25, shadowRadius: 3.84}}>
