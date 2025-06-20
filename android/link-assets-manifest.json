@@ -18,6 +18,10 @@
       "sha1": "4bda9b40c53eab249ae4721a872b7a2c40b2cd05"
     },
     {
+      "path": "assets/img/app_icon.png",
+      "sha1": "0050c98fb887fb03d80de5313e6aa8d6d4d12ea5"
+    },
+    {
       "path": "assets/img/avatar.png",
       "sha1": "29d47c31f5c1ea9d55e37b2f4f862c3919f7ac52"
     },
@@ -68,6 +72,10 @@
     {
       "path": "assets/img/slider3.png",
       "sha1": "dd5f13088adf617a3a8f932a1e97316f854e2735"
+    },
+    {
+      "path": "assets/img/splash.jpg",
+      "sha1": "514fe3cb46a4a33e0370825ae5bcc3c68fed80e1"
     },
     {
       "path": "assets/img/v1.png",

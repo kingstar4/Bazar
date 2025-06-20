@@ -20,7 +20,7 @@ const ProfileCardUI = ({text, iconName }: ProfileCardUIProps) => {
                 <Text style={{fontSize:16, fontWeight:'600', color:'#121212'}}>{text}</Text>
             </View>
             <View>
-                <MaterialIcons name="arrow-forward-ios" color="#A6A6A6" size={24} />
+                <MaterialIcons name="arrow-forward-ios" color="#A6A6A6" size={16} />
             </View>
         </View>
     </TouchableOpacity>

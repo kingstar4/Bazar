@@ -4,33 +4,36 @@ import React from 'react';
 import FastImage from 'react-native-fast-image';
 import CusButton from '../../customUI/CusButton';
 import { Book } from '../../../utils/types';
+import { truncateText } from '../../../utils/truncate';
 
 type CarouselProps = {
     item: Book;
     onPress: (book: Book)=> void;
 }
 
-const {width} = Dimensions.get('window');
+const {width: screenWidth} = Dimensions.get('window');
+const cardWidth = screenWidth - 20;
+
 const Carousel = ({item, onPress}: CarouselProps) => {
   const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
   const price = item.saleInfo?.listPrice?.amount
     ? `$${item.saleInfo.listPrice.amount}`
     : 'Not for sale';
-
+  const authors = item.volumeInfo?.authors || ['Unknown Author'];
   return (
-    <View style={{flexDirection:'row', display:'flex', width, height:270, position:'relative', marginBottom:20}}>
+    <View style={styles.container}>
       <View style={styles.overlay}/>
       <FastImage
           source={require('../../../../assets/img/nb1.jpg')}
-          style={{width: 400, height:230, position:'absolute', top:0, left:0, zIndex:-1, marginHorizontal:10, marginRight:10, display:'flex', alignSelf:'center', alignItems:'center',justifyContent:'center', borderRadius: 10}}
+          style={styles.backgroundImage}
           resizeMode={FastImage.resizeMode.cover}
-        />
-      <View style={{flexDirection:'row', display:'flex', width, justifyContent: 'space-between', alignItems:'center', padding:20}}>
-        <View style={{alignItems:'flex-start', justifyContent:'center', gap:10, flexDirection:'column', flex: 1, marginRight: 10, marginLeft:20}}>
-          <Text style={{fontWeight:'700', fontSize:20, lineHeight:28, color:'white'}} numberOfLines={2}>
-            {item.volumeInfo.title}
+      />
+      <View style={{flexDirection:'row', display:'flex', width: cardWidth, justifyContent: 'space-between', alignItems:'center', paddingVertical:20, paddingHorizontal: 10}}>
+        <View style={{alignItems:'flex-start', justifyContent:'center', gap:10, width:30, flexDirection:'column', flex: 1}}>
+          <Text style={{fontWeight:'700', fontSize:20, lineHeight:28, color:'white'}} numberOfLines={1}>
+            {truncateText(item.volumeInfo.title, 17)}
           </Text>
-          <Text style={{color:'#fff'}}>by {item.volumeInfo?.authors}</Text>
+          <Text style={{color:'#fff'}}>by {truncateText(authors.join(', '), 17)}</Text>
           {/* <Text style={{fontSize: 16, color: '#666', marginVertical: 5}}>
             {price}
           </Text> */}
@@ -48,7 +51,7 @@ const Carousel = ({item, onPress}: CarouselProps) => {
               priority: FastImage.priority.normal,
               cache: FastImage.cacheControl.immutable,
             }}
-            style={{width:130, height:150, borderRadius:12}}
+            style={{width:120, height:150, borderRadius:12}}
             resizeMode={FastImage.resizeMode.cover}
           />
         </View>
@@ -60,15 +63,25 @@ const Carousel = ({item, onPress}: CarouselProps) => {
 export default Carousel;
 
 const styles = StyleSheet.create({
+  container: {
+    width: screenWidth,
+    height: 270,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   overlay:{
-    ...StyleSheet.absoluteFillObject,
+    position: 'absolute',
     backgroundColor:'rgba(0,0,0,0.5)',
-    width: 400,
-    height:230,
-    alignSelf:'center',
-    justifyContent:'center',
-    marginLeft:10,
-    borderRadius:10,
-    // zIndex:0,
+    width: cardWidth,
+    height: 230,
+    borderRadius: 10,
+  },
+  backgroundImage: {
+    width: cardWidth,
+    height: 230,
+    position: 'absolute',
+    borderRadius: 10,
+    zIndex: -1,
   },
 })

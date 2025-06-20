@@ -14,7 +14,7 @@ export const fetchBooks = async (
     const { data } = await axios.get(BASE_URL, {
       params: {
         q: query,
-        filter: 'free-ebooks',
+        // filter: 'free-ebooks',
         download: 'epub',
         startIndex: pageParam,
         maxResults: 20, // Use 20 to reduce payload for infinite loading

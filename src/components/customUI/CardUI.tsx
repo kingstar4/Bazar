@@ -47,10 +47,10 @@ const CardUI = ({item, onPress}:CardUIProps) => {
             <Text style={{marginLeft:3, fontWeight:700}} numberOfLines={1}>
               {item.volumeInfo.title}
             </Text>
-            {authors ? ( <Text style={{paddingVertical:6}} numberOfLines={1}> by {authors}</Text>) : <Text style={{marginLeft:3}}>Unknown</Text>}
-            
+            {authors ? ( <Text style={{paddingVertical:6}} numberOfLines={1}> by {authors}</Text>) : <Text style={{marginLeft:3, paddingVertical:6}}>Unknown</Text>}
+
             <View style={{backgroundColor: 'rgba(84, 64, 140, 0.1)', borderRadius: 16,paddingHorizontal: 6, paddingVertical: 6,}}>
-              <Text style={{paddingLeft:5, color: '#54408C', fontSize:12,  fontWeight: '500',}}>
+              <Text style={{paddingLeft:5, color: '#54408C', fontSize:12,  fontWeight: '500'}}>
                 {getPriceText()}
               </Text>
             </View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         justifyContent:'flex-end',
         flexDirection:'column',
         backgroundColor:'transparent',
-        width:170,
+        width:130,
         height:250,
         marginHorizontal: 6,
         marginBottom: 40,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         flexDirection:'column',
-        width:170,
+        width:130,
         height:120,
         borderRadius: 12,
     },

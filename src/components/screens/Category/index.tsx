@@ -7,6 +7,9 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import React, {useState, useEffect, useMemo} from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -19,7 +22,7 @@ import CardUI from '../../customUI/CardUI';
 
 type Props = {}
 
-
+const {width: screenWidth} = Dimensions.get('window');
 const Category = ({}: Props) => {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -69,52 +72,6 @@ const {
 const books = useMemo(() => {
   return data?.pages.flatMap((page) => page.items) || [];
 }, [data]);
-
-  // Component carrying book card details
-  // const renderBook = ({ item}: { item: Book }) => {
-  //     const { title } = item.volumeInfo;
-  //     const sale = item.saleInfo;
-  //     const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
-
-  //     const getPriceText = () => {
-  //     if (sale?.saleability === 'FOR_SALE') {
-  //       if (sale?.retailPrice) {
-  //         return `${sale?.retailPrice.amount.toFixed(2)} ${sale?.retailPrice.currencyCode}`;
-  //       } else if (sale?.listPrice) {
-  //         return `${sale?.listPrice.amount.toFixed(2)} ${sale?.listPrice.currencyCode}`;
-  //       }
-  //     }
-  //     return sale?.saleability === 'FREE' ? 'Free' : 'Not for Sale';
-  //   };
-
-  //     return (
-  //         <View style={styles.bookList}>
-  //           <Pressable onPress={()=>handleBookPress(item)} style={{alignItems:'center', justifyContent:'center'}}>
-  //             <View style={[styles.cardBody, {backgroundColor: getColorFromId(item.id)}]}>
-  //               <View style={{marginBottom:60,  width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', elevation:6, borderRadius:12, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0, height:2}, shadowOpacity:0.25, shadowRadius:3.84, backgroundColor:'#fff'}}>
-  //                 <FastImage
-  //                   source={{
-  //                     uri: imageUrl,
-  //                     priority: FastImage.priority.normal,
-  //                   }}
-  //                   style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
-  //                   resizeMode={FastImage.resizeMode.cover}
-  //                 />
-  //               </View>
-  //             </View>
-
-  //             <View style={{paddingHorizontal: 8, paddingVertical: 4, display:'flex', alignItems:'center', justifyContent:'center', backgroundColor:'transparent'}}>
-  //               <Text style={{textAlign:'center', fontWeight:700}} numberOfLines={1}>
-  //                 {title}
-  //               </Text>
-  //               <Text style={{textAlign:'center'}} numberOfLines={1}>
-  //                 {getPriceText()}
-  //               </Text>
-  //             </View>
-  //         </Pressable>
-  //     </View>
-  //     );
-  //   };
 
     // Function for Empty States
     const renderEmptyState = () => {
@@ -173,6 +130,7 @@ const books = useMemo(() => {
 
 
     return (
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
       <View style={styles.container}>
 
         <View style={styles.row}>
@@ -243,6 +201,7 @@ const books = useMemo(() => {
         )}
         <BottomSheetFilter visible={isopen} onClose={()=> setIsOpen(false)} onCategorySelect={handleCategorySelection} onSortAZ={handleSortAZ}/>
       </View>
+      </KeyboardAvoidingView>
     );
 };
 
@@ -275,7 +234,6 @@ const styles = StyleSheet.create({
   container: {
       flex: 1,
       padding: 16,
-      marginTop: 40,
   },
   row: {
       flexDirection: 'row',
@@ -338,6 +296,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 100,
+    width: screenWidth-32, // Adjusted for padding
   },
   searchInput: {
     flex: 1,

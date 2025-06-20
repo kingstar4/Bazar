@@ -24,7 +24,7 @@ const {width} = Dimensions.get('window');
 const Home = () => {
     const navigation = useNavigation <NavigationProp<ProtectedParamList>>();
     const [presentIndex, setPresentIndex] = React.useState(0);
-    const ref = React.useRef<any>(null);
+    const ref = React.useRef<FlatList>(null); 
 
     // Global Zustand State
     const {selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
@@ -46,29 +46,38 @@ const Home = () => {
             setSelectedBook(book);
             setIsModalVisible(true);
     };
+    const [isScrolling, setIsScrolling] = React.useState(false);
+
+    // Update scroll function with debouncing
+    const scroll = (event: ScrollEvent): void => {
+        if (isScrolling) { return; }
+
+        setIsScrolling(true);
+        const contentOffsetX = event.nativeEvent.contentOffset.x;
+        const index = Math.floor((contentOffsetX + width / 2) / width);
+
+        if (index !== presentIndex && index >= 0 && index < (carouselBooks?.length || 0)) {
+            setPresentIndex(index);
+        }
+
+        setTimeout(() => setIsScrolling(false), 150);
+    };
+
     useEffect(() => {
         const interval = setInterval(() => {
-            if (carouselBooks) {
+            if (carouselBooks && !isScrolling) {
                 const nextIndex = (presentIndex + 1) % carouselBooks.length;
                 setPresentIndex(nextIndex);
                 ref.current?.scrollToIndex({
                     animated: true,
                     index: nextIndex,
+                    viewPosition: 0.5,
                 });
             }
         }, 3000); // Change slide every 3 seconds
 
         return () => clearInterval(interval);
-    }, [presentIndex, carouselBooks]);
-
-    // Scroll function
-    const scroll = (event: ScrollEvent): void => {
-        const contentOffsetX = event.nativeEvent.contentOffset.x;
-        const index = Math.round(contentOffsetX / width);
-        if (index !== presentIndex) {
-            setPresentIndex(index);
-        }
-    };
+    }, [presentIndex, carouselBooks, isScrolling]);
 
     const indicator = () => {
         return carouselBooks?.map((_, index) => (
@@ -88,7 +97,7 @@ const Home = () => {
     };
 
   return (
-    <SafeAreaView style={{flex:1, paddingVertical:20, marginTop:20}}>
+    <SafeAreaView style={{flex:1}}>
       <ScrollView>
         <CustomMainHeader text="Home" icon="search" onPress={()=>{navigation.navigate('Category')}} icon2="bell"/>
 
@@ -97,12 +106,17 @@ const Home = () => {
             <FlatList
               data={carouselBooks}
               renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>}
-              onScroll={scroll}
+              onScrollBeginDrag={() => setIsScrolling(true)}
+              onScrollEndDrag={() => setIsScrolling(false)}
+              onMomentumScrollEnd={scroll}
               ref={ref}
               keyExtractor={(item) => item.id}
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
+              snapToInterval={width}
+              decelerationRate="fast"
+              snapToAlignment="center"
               getItemLayout={(_, index) => ({
                 length: width,
                 offset: width * index,
@@ -122,7 +136,11 @@ const Home = () => {
           <CusHeaders text="Top of Week"  />
           <FlashList
             data={topbooks}
-            renderItem={({ item }) => <CardUI item={item} onPress={handleBookPress} />}
+            renderItem={({ item }) => (
+            <View style={{marginHorizontal:5}}>
+              <CardUI item={item} onPress={handleBookPress} />
+            </View>
+          )}
             horizontal
             estimatedItemSize={140}
             contentContainerStyle={styles.flashListContainer}
@@ -132,14 +150,14 @@ const Home = () => {
          }
 
         {/* Vendors Section */}
-        <View style={{paddingTop: 10, marginTop:30}}>
+        <View style={{paddingTop: 10,marginTop:40}}>
           <CusHeaders text="Best Vendors" />
           <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/>
         </View>
 
-        {/* Authors Section */}
+        {/* Recommended Section */}
         <View style={{paddingBottom: 70}}>
-          <CusHeaders text="Authors"/>
+          <CusHeaders text="Recommended"/>
           <FlatList
             data={topbooks?.slice(0,5)}
             renderItem={Authors}
@@ -181,6 +199,7 @@ const styles = StyleSheet.create({
       height: 260,
       width: '100%',
       marginVertical: 10,
+      marginBottom: 30,
     },
     flashListContainer: {
       paddingHorizontal: 10,
