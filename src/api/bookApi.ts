@@ -40,6 +40,7 @@ export const fetchBooks = async (
   }
 };
 
+
 export const fetchHomeBooks = async (searchTerm: string = ''): Promise<Book[]> => {
   try {
     const query = searchTerm.trim() !== '' ? searchTerm : 'subject:fiction';
@@ -58,7 +59,13 @@ export const fetchHomeBooks = async (searchTerm: string = ''): Promise<Book[]> =
       throw new Error('NoResults');
     }
 
-    return data.items;
+    // return data.items;
+    const books: Book[] = data.items.map( (item:any )=> ({
+      ...item,
+      isFavourite: false, // Default value, can be updated later
+    }));
+    return books;
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (!error.response) {

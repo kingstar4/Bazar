@@ -38,8 +38,8 @@ const Splash = ({}: Props) => {
   return (
     <View style={styles.container}>
       <Animated.View style={[{
-        width: 100,
-        height: 100,
+        width: 200,
+        height: 200,
         borderRadius: 25,
         overflow: 'hidden',
         marginBottom: 20,

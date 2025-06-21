@@ -24,7 +24,7 @@ const {width} = Dimensions.get('window');
 const Home = () => {
     const navigation = useNavigation <NavigationProp<ProtectedParamList>>();
     const [presentIndex, setPresentIndex] = React.useState(0);
-    const ref = React.useRef<FlatList>(null); 
+    const ref = React.useRef<FlatList>(null);
 
     // Global Zustand State
     const {selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();

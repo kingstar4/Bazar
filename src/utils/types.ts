@@ -103,6 +103,10 @@ export type ProtectedParamList = {
   Cart: undefined;
 };
 
+export type ProfileParamList ={
+  Profile: undefined;
+  FavouriteList: undefined;
+}
 
 export type AuthState = {
     isAuthenticated: boolean;
@@ -209,6 +213,7 @@ export interface Book {
     searchInfo?: {
         textSnippet?: string;
     };
+    isFavourite?: boolean;
 }
 
 export interface ScrollEvent {

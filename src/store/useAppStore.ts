@@ -16,6 +16,8 @@ type AppState = {
   isOnboarded: boolean;
   isAuthenticated: boolean;
   user: User| null;
+  isFavourite: boolean;
+  favourites: Book[];
   initApp: () => Promise<void>;
   setOnboarded: () => Promise<void>;
   login: (token: string, uid:string) => Promise<void>;
@@ -28,15 +30,22 @@ type AppState = {
   setIsModalVisible: (visible:boolean)=>void
   setSelectedBook: (book: Book | null)=> void
   reset: ()=> void
+
+  // Favourites
+  addFavourite: (book: Book) => void;
+  removeFavourite: (bookId: string) => void;
+  isBookFavourite: (bookId: string) => boolean;
 };
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   isLoading: true,
   isOnboarded: false,
   isAuthenticated: false,
   user: null,
   isModalVisible:false,
   selectedBook: null,
+  isFavourite: false,
+  favourites: [],
 
   // Run once when app launches
   initApp: async () => {
@@ -44,11 +53,13 @@ export const useAppStore = create<AppState>((set) => ({
       const onboarded = await AsyncStorage.getItem('hasOnboarded');
       const token = await AsyncStorage.getItem('authToken');
       const userJSON = await AsyncStorage.getItem('userInfo');
+      const favs = await AsyncStorage.getItem('favourites');
 
       set({
         isOnboarded: !!onboarded,
         isAuthenticated: !!token,
         user: userJSON ? JSON.parse(userJSON) : null,
+        favourites: favs ? JSON.parse(favs) : [],
         isLoading: false,
       });
     } catch (error) {
@@ -103,5 +114,27 @@ export const useAppStore = create<AppState>((set) => ({
   setSelectedBook: (book)=> set({selectedBook: book}),
 
   reset: ()=> set({isModalVisible: false, selectedBook: null}),
+
+  addFavourite: (book) => {
+    const { favourites } = get();
+    const exists = favourites.some(b => b.id === book.id);
+    if (!exists) {
+      const updated = [...favourites, { ...book, isFavourite: true }];
+      AsyncStorage.setItem('favourites', JSON.stringify(updated));
+      set({ favourites: updated });
+    }
+  },
+
+  removeFavourite: (bookId) => {
+    const { favourites } = get();
+    const updated = favourites.filter(b => b.id !== bookId);
+    AsyncStorage.setItem('favourites', JSON.stringify(updated));
+    set({ favourites: updated });
+  },
+
+  isBookFavourite: (bookId) => {
+    const { favourites } = get();
+    return favourites.some(b => b.id === bookId);
+  },
 
 }));

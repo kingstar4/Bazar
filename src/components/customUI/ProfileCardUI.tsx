@@ -1,17 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 type ProfileCardUIProps = {
     text: string;
     iconName: string;
+    onPress?: ()=> void;
 }
 
-const ProfileCardUI = ({text, iconName }: ProfileCardUIProps) => {
+const ProfileCardUI = ({text, iconName, onPress }: ProfileCardUIProps) => {
   return (
-    <TouchableOpacity>
+    <Pressable onPress={onPress} >
         <View style={styles.cardContainer}>
             <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
                 <View style={styles.iconContainer}>
@@ -23,7 +24,7 @@ const ProfileCardUI = ({text, iconName }: ProfileCardUIProps) => {
                 <MaterialIcons name="arrow-forward-ios" color="#A6A6A6" size={16} />
             </View>
         </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

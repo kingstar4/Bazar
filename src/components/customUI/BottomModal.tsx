@@ -15,6 +15,7 @@ import CusButton from './CusButton';
 import { downloadFile, downloadAndOpenFile } from '../../hooks/handleDownload';
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
+import { useAppStore } from '../../store/useAppStore';
 
 
 type Props = {
@@ -26,7 +27,17 @@ type Props = {
 const BottomModal = ({onClose, book, visible}: Props) => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => [ '60%', '100%'], []);
+  const addFavourite = useAppStore(state => state.addFavourite);
+  const removeFavourite = useAppStore(state => state.removeFavourite);
+  const isBookFavourite = useAppStore(state => state.isBookFavourite);
+
   const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    if (book) {
+      setIsFavorite(isBookFavourite(book.id));
+    }
+  }, [book, isBookFavourite, visible]);
 
   const handleClose = useCallback(() => {
     bottomSheetRef.current?.close();
@@ -34,7 +45,14 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   }, [onClose]);
 
   const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+    if (!book) return;
+    if (isFavorite) {
+      removeFavourite(book.id);
+      setIsFavorite(false);
+    } else {
+      addFavourite({ ...book, isFavourite: true });
+      setIsFavorite(true);
+    }
   };
 
   // Open Bottom sheet Modal when visible becomes true

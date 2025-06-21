@@ -5,11 +5,12 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../components/screens/Home';
-import Profile from '../components/screens/Profile';
+// import Profile from '../components/screens/Profile';
 import Category from '../components/screens/Category';
 import { StyleSheet } from 'react-native';
 import Test from '../components/screens/Test';
 import New from '../components/screens/New';
+import ProfileStackScreen from '../navigation/ProfileStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -51,7 +52,7 @@ const ProtectedRoutes = () => {
         <Tab.Screen name="Category" component={Category}/>
         <Tab.Screen name="Test" component={Test}/>
         <Tab.Screen name="New" component={New}/>
-        <Tab.Screen name="Profile" component={Profile}/>
+        <Tab.Screen name="Profile" component={ProfileStackScreen}/>
       </Tab.Navigator>
   );
 };

@@ -2,11 +2,11 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { useAppStore } from '../../../store/useAppStore';
-import ProfileCardUI from '../../customUI/ProfileCardUI';
+import { useAppStore } from '../store/useAppStore';
+import ProfileCardUI from '../components/customUI/ProfileCardUI';
 // import { ActivityIndicator } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { ProfileParamList } from '../../../utils/types';
+import { ProfileParamList } from '../utils/types';
 
 const Profile = () => {
   const { width } = Dimensions.get('window');
@@ -16,7 +16,7 @@ const Profile = () => {
   const navigation = useNavigation<NavigationProp<ProfileParamList>>();
 
   useEffect(() => {
-  console.log(' Zustand user:', user);
+  console.log('🧠 Zustand user:', user);
 }, [user]);
 
   const pickImage = async () => {
