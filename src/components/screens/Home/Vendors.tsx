@@ -29,6 +29,14 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         padding:20,
         paddingHorizontal:5,
+        elevation:3,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
     },
 
 });

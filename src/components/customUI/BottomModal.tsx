@@ -45,7 +45,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   }, [onClose]);
 
   const toggleFavorite = () => {
-    if (!book) return;
+    if (!book) {return;}
     if (isFavorite) {
       removeFavourite(book.id);
       setIsFavorite(false);
@@ -90,7 +90,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   const epubUrl = book.accessInfo?.epub?.downloadLink;
   const pdfUrl = book.accessInfo?.pdf?.downloadLink;
   const downloadUrl = epubUrl || pdfUrl;
-  
+
   // Check if downloads are available
   const isPdfAvailable = book.accessInfo?.pdf?.isAvailable && pdfUrl;
   const isEpubAvailable = book.accessInfo?.epub?.isAvailable && epubUrl;

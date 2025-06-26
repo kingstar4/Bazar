@@ -65,10 +65,11 @@ export default Carousel;
 const styles = StyleSheet.create({
   container: {
     width: screenWidth,
-    height: 270,
+    height: 260,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginTop:50,
+    // marginBottom: 20,
   },
   overlay:{
     position: 'absolute',

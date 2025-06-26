@@ -19,11 +19,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomModal from '../../customUI/BottomModal';
 import BottomSheetFilter from '../../customUI/BottomSheetFilter';
 import CardUI from '../../customUI/CardUI';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { ProtectedParamList } from '../../../utils/types';
+import { NavigationProp } from '@react-navigation/native';
 
-type Props = {}
+type Props = {
+  navigation: NavigationProp<ProtectedParamList>;
+}
 
 const {width: screenWidth} = Dimensions.get('window');
-const Category = ({}: Props) => {
+const Library = ({navigation}: Props) => {
+  const route = useRoute<RouteProp<ProtectedParamList, 'Library'>>();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('fiction');
@@ -49,6 +56,13 @@ const Category = ({}: Props) => {
       setSelectedBook(book);
       setIsModalVisible(true);
   };
+
+  // If search param is passed, set it as the search value on mount
+  React.useEffect(() => {
+    if (route.params?.search) {
+      setSearch(route.params.search);
+    }
+  }, [route.params?.search]);
 
   // Use debounced search term for the query
   const activeQuery = debouncedSearch ? debouncedSearch : `subject:${selectedCategory}`;
@@ -130,82 +144,88 @@ const books = useMemo(() => {
 
 
     return (
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
-      <View style={styles.container}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+        <View style={styles.container}>
 
-        <View style={styles.row}>
-          <Text style={styles.headerTitle}>Categories</Text>
+          <View style={styles.row}>
+            <TouchableOpacity style={{  padding: 10}} onPress={()=>{navigation.goBack()}}>
+              <Ionicons name="chevron-back" size={24} color="#333"  />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Library</Text>
 
-          <TouchableOpacity onPress={()=> setIsOpen(true)} style={{padding: 8, borderRadius: 8, backgroundColor: '#f5f5f5', elevation: 1, shadowColor: '#000', shadowOffset: {width: 0, height: 2}, shadowOpacity: 0.1}}>
-            <Ionicons name="filter" size={24} color="#333" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.row}>
-
-          <View style={styles.searchContainer}>
-            <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search books..."
-              value={search}
-              onChangeText={(text) => {
-                setSearch(text);
-              }}
-            />
+            <TouchableOpacity onPress={()=> setIsOpen(true)} style={{padding: 10, backgroundColor:'#E5DEF8',  borderRadius: 50}}>
+              <Ionicons name="filter" size={24} color="#54408C" />
+            </TouchableOpacity>
           </View>
 
-          {search.length > 0 && (
-            <TouchableOpacity
-              onPress={() => {
-                setSearch('');
-              }}
-              style={styles.clearBtn}
-            >
-              <Text style={styles.clearText}>Clear</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+          <View style={styles.row}>
+
+            <View style={styles.searchContainer}>
+              <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search books..."
+                placeholderTextColor={'#bfbec5'}
+                value={search}
+                onChangeText={(text) => {
+                  setSearch(text);
+                }}
+              />
+            </View>
+
+            {search.length > 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  setSearch('');
+                }}
+                style={styles.clearBtn}
+              >
+                <Text style={styles.clearText}>Clear</Text>
+              </TouchableOpacity>
+            )}
+          </View>
 
 
 
-        {isFetching && !isFetchingNextPage && !data ? (
-            <ActivityIndicator size="large" color="#54408C" style={{ marginVertical: 20 }} />
-          ) : books.length === 0 ? (
-            renderEmptyState()
-          ) : (
-            <FlatList
-              data={sortedData}
-              keyExtractor={(item) => item.id}
-              renderItem={({item})=> <CardUI item={item} onPress={handleBookPress}/>}
-              numColumns={2}
-              columnWrapperStyle={{ justifyContent: 'space-between' }}
-              contentContainerStyle={styles.list}
-              showsVerticalScrollIndicator={false}
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
+          {isFetching && !isFetchingNextPage && !data ? (
+              <ActivityIndicator size="large" color="#54408C" style={{ marginVertical: 20 }} />
+            ) : books.length === 0 ? (
+              renderEmptyState()
+            ) : (
+              <FlatList
+                data={sortedData}
+                keyExtractor={(item) => item.id}
+                renderItem={({item})=> <CardUI item={item} onPress={handleBookPress}/>}
+                numColumns={2}
+                columnWrapperStyle={{ justifyContent: 'space-around' }}
+                contentContainerStyle={styles.list}
+                showsVerticalScrollIndicator={false}
+                onEndReached={() => {
+                  if (hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                  }
+                }}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={
+                  isFetchingNextPage ? (
+                    <ActivityIndicator size="small" color="#333" style={{ marginVertical: 20 }} />
+                  ) : null
                 }
-              }}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={
-                isFetchingNextPage ? (
-                  <ActivityIndicator size="small" color="#333" style={{ marginVertical: 20 }} />
-                ) : null
-              }
-            />
-          )}
+              />
+            )}
 
-        {selectedBook && isModalVisible && (
-          <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
-        )}
-        <BottomSheetFilter visible={isopen} onClose={()=> setIsOpen(false)} onCategorySelect={handleCategorySelection} onSortAZ={handleSortAZ}/>
-      </View>
-      </KeyboardAvoidingView>
+          {selectedBook && isModalVisible && (
+            <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
+          )}
+          <BottomSheetFilter visible={isopen} onClose={()=> setIsOpen(false)} onCategorySelect={handleCategorySelection} onSortAZ={handleSortAZ}/>
+        </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
 };
 
-export default Category;
+export default Library;
 
 const styles = StyleSheet.create({
   bookList:{
@@ -234,10 +254,12 @@ const styles = StyleSheet.create({
   container: {
       flex: 1,
       padding: 16,
+      backgroundColor:'#fff',
   },
   row: {
       flexDirection: 'row',
       alignItems: 'center',
+      alignSelf: 'center',
       justifyContent: 'space-between',
       width: '100%',
       marginBottom: 20,
@@ -274,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 16,
+    // marginBottom: 16,
     alignSelf: 'center',
     justifyContent: 'center',
   },
@@ -303,23 +325,17 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 16,
     color: '#333',
+
   },
   searchContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#f5f5f5',
-      borderRadius: 12,
+      backgroundColor: '#f2f2f4',
+      borderRadius: 25,
       borderWidth: 0,
       paddingHorizontal: 12,
       flex: 1,
       marginRight: 10,
-      elevation: 1,
-      shadowColor: '#000',
-      shadowOffset: {
-          width: 0,
-          height: 2,
-      },
-      shadowOpacity: 0.1,
   },
   searchIcon: {
     marginRight: 8,

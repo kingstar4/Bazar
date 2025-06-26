@@ -95,8 +95,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       console.log('UserInfo: ',user);
       set({ user });
     }
-    console.log('✅ login called with UID:', uid);
-    console.log('👤 Firestore userData:', userData);
+    console.log('login called with UID:', uid);
+    console.log(' Firestore userData:', userData);
   },
 
   // Called when user logs out

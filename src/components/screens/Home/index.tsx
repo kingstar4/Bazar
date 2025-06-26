@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, ActivityIndicator} from 'react-native';
+import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, ActivityIndicator, TextInput} from 'react-native';
 import React, { useEffect } from 'react';
 import CusHeaders from '../../customUI/CusHeaders';
 import Carousel from './Carousel';
@@ -10,21 +10,25 @@ import { ScrollEvent } from '../../../utils/types';
 import { useQuery } from '@tanstack/react-query';
 import { fetchHomeBooks } from '../../../api/bookApi';
 import { Book } from '../../../utils/types';
-import Authors from './Authors';
+// import Authors from './Recommended';
 import { FlashList } from '@shopify/flash-list';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { ProtectedParamList } from '../../../utils/types';
 import BottomModal from '../../customUI/BottomModal';
 import { useAppStore } from '../../../store/useAppStore';
 import CardUI from '../../customUI/CardUI';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Recommended from './Recommended';
 
-// import CardUI from '../../customUI/CardUI';
+
+
 const {width} = Dimensions.get('window');
 
 const Home = () => {
-    const navigation = useNavigation <NavigationProp<ProtectedParamList>>();
+    const navigation = useNavigation<NavigationProp<ProtectedParamList>>();
     const [presentIndex, setPresentIndex] = React.useState(0);
     const ref = React.useRef<FlatList>(null);
+    const [search, setSearch] = React.useState('');
 
     // Global Zustand State
     const {selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
@@ -40,6 +44,11 @@ const Home = () => {
     const {data: topbooks, isLoading} = useQuery<Book[]>({
       queryKey:['topbooks'],
       queryFn: ()=>fetchHomeBooks('best sellers'),
+    });
+
+    const {data: history, isLoading: isLoadingHistory} = useQuery<Book[]>({
+      queryKey:['history'],
+      queryFn: ()=>fetchHomeBooks('history'),
     });
 
     const handleBookPress = (book: Book) => {
@@ -96,10 +105,53 @@ const Home = () => {
         ));
     };
 
+    // Add this function to handle search submit
+    const handleSearchSubmit = () => {
+      if (search.trim().length > 0) {
+        // Use jumpTo for tab navigation
+        // @ts-ignore
+        navigation.jumpTo('Library', { search });
+      }
+      setSearch('');
+
+    };
+
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={styles.mainContainer}>
       <ScrollView>
-        <CustomMainHeader text="Home" icon="search" onPress={()=>{navigation.navigate('Category')}} icon2="bell"/>
+        <CustomMainHeader text="Bazar" icon="search" onPress={()=>{}} icon2="bell"/>
+        <View style={styles.searchContainer}>
+          <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search book..."
+            placeholderTextColor={'#bfbec5'}
+            value={search}
+            onChangeText={(text) => {
+              setSearch(text);
+            }}
+            onSubmitEditing={handleSearchSubmit}
+            returnKeyType="search"
+          />
+        </View>
+        {/* Books Section */}
+        {isLoading ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
+        <View style={styles.bookSection}>
+          <CusHeaders text="Top of Week"  />
+          <FlashList
+            data={topbooks}
+            renderItem={({ item }) => (
+            <View style={{marginHorizontal:5}}>
+              <CardUI item={item} onPress={handleBookPress} />
+            </View>
+          )}
+            horizontal
+            estimatedItemSize={140}
+            contentContainerStyle={styles.flashListContainer}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+         }
 
         {carouselBooks && (
           <>
@@ -130,47 +182,33 @@ const Home = () => {
         )}
 
 
-        {/* Books Section */}
-        {isLoading ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
-        <View style={styles.bookSection}>
-          <CusHeaders text="Top of Week"  />
-          <FlashList
-            data={topbooks}
-            renderItem={({ item }) => (
-            <View style={{marginHorizontal:5}}>
-              <CardUI item={item} onPress={handleBookPress} />
-            </View>
-          )}
-            horizontal
-            estimatedItemSize={140}
-            contentContainerStyle={styles.flashListContainer}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-         }
 
         {/* Vendors Section */}
-        <View style={{paddingTop: 10,marginTop:40}}>
+        <View style={{paddingTop: 10,marginTop:20}}>
           <CusHeaders text="Best Vendors" />
           <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/>
         </View>
 
         {/* Recommended Section */}
+        {isLoadingHistory ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
         <View style={{paddingBottom: 70}}>
           <CusHeaders text="Recommended"/>
           <FlatList
-            data={topbooks?.slice(0,5)}
-            renderItem={Authors}
+            data={history?.slice(0,5)}
+            renderItem={({item})=> <Recommended item={item} onPress={handleBookPress}/>}
             scrollEnabled={false}
             keyExtractor={(item)=>item.id}
             showsHorizontalScrollIndicator={false}
             initialNumToRender={4}
           />
         </View>
+        }
+
       </ScrollView>
        {selectedBook && isModalVisible && (
           <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
         )}
+
     </SafeAreaView>
   );
 };
@@ -178,6 +216,10 @@ const Home = () => {
 export default Home;
 
 const styles = StyleSheet.create({
+    mainContainer:{
+        flex:1,
+        backgroundColor: '#fff',
+    },
     mainTxt: {
         fontSize: 20,
         fontWeight: 'bold',
@@ -204,4 +246,27 @@ const styles = StyleSheet.create({
     flashListContainer: {
       paddingHorizontal: 10,
     },
+    searchInput: {
+    flex: 1,
+    height: 50,
+    fontSize: 16,
+    color: '#333',
+
+  },
+  searchContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf:'center',
+      marginHorizontal: 20,
+      marginVertical: 10,
+      backgroundColor: '#f2f2f4',
+      borderRadius: 25,
+      borderWidth: 0,
+      paddingHorizontal: 12,
+      flex: 1,
+      marginRight: 10,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
 });

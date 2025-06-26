@@ -6,6 +6,8 @@ import '@react-native-firebase/app';
 import RootNavigator from './src/navigation/RootNavigator';
 import Toast from 'react-native-toast-message';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'react-native';
 
 const queryCLient = new QueryClient();
 
@@ -13,8 +15,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryCLient}>
       <GestureHandlerRootView style={{ flex: 1}}>
-        <RootNavigator />
-        <Toast/>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'fff'}}>
+          <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+          <RootNavigator />
+          <Toast/>
+        </SafeAreaView>
       </GestureHandlerRootView>
     </QueryClientProvider>
   );

@@ -17,7 +17,7 @@ export default function ProfileStackScreen() {
       <Stack.Screen
         name="FavouriteList"
         component={FavouriteList}
-        options={{ title: 'Favourites' }}
+        options={{ title: 'Favourites'}}
       />
     </Stack.Navigator>
   );

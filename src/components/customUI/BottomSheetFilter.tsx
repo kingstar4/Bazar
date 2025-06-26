@@ -99,6 +99,7 @@ const BottomSheetFilter = ({visible, onClose, onCategorySelect, onSortAZ}: Botto
         ref={bottomSheetRef}
         enablePanDownToClose={true}
         enableContentPanningGesture={true}
+        backgroundStyle={{borderTopLeftRadius: 24, borderTopRightRadius: 24}}
         onClose={handleClose}
         backdropComponent={renderBackdrop}
         handleStyle={styles.handleStyle} // Hide the handle
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     },
     txt:{
         fontSize: 16,
-        fontWeight: '400',
+        fontWeight: '500',
         color: '#121212',
     },
     sortBtn:{

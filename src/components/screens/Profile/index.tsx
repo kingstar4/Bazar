@@ -13,6 +13,7 @@ const Profile = () => {
   const [avatar, setAvatar] = useState<string | null>(null);
   const { logout } = useAppStore();
   const user = useAppStore((state)=> state.user);
+  const favouriteCount = useAppStore((state) => state.favourites.length);
   const navigation = useNavigation<NavigationProp<ProfileParamList>>();
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const Profile = () => {
             <Text style={styles.email}>
               {user.name}
             </Text>
-            <Text>{user.phone}</Text>
+            <Text style={{letterSpacing:1, fontWeight:500}}>{user.phone}</Text>
           </View>)
           : <ActivityIndicator size="large" color="#54408C" style={{alignSelf:'center', marginVertical:16}}/>
         }
@@ -68,7 +69,7 @@ const Profile = () => {
       </View>
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
         <ProfileCardUI text="My Account" iconName="person"/>
-        <ProfileCardUI text="Favourite" onPress={()=> navigation.navigate('FavouriteList')} iconName="heart"/>
+        <ProfileCardUI text="Favourite" onPress={()=> navigation.navigate('FavouriteList')} itemNumber={favouriteCount > 0 ? `${favouriteCount}` : ''} iconName="heart"/>
         <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses"/>
 
       </View>
@@ -82,13 +83,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 20,
+
   },
   profileSection: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     alignItems: 'center',
-    marginTop: 20,
+    // marginTop: 20,
     paddingHorizontal: 30,
     borderTopWidth: 1,
     borderBottomWidth: 1,

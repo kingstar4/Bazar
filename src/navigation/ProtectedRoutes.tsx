@@ -3,13 +3,13 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Home from '../components/screens/Home';
-// import Profile from '../components/screens/Profile';
 import Category from '../components/screens/Category';
 import { StyleSheet } from 'react-native';
-import Test from '../components/screens/Test';
-import New from '../components/screens/New';
+// import Test from '../components/screens/Test';
+// import New from '../components/screens/New';
 import ProfileStackScreen from '../navigation/ProfileStack';
 
 
@@ -24,9 +24,9 @@ const getTabBarIcon = (route: { name: string }) => ({ color, size }: { color: st
     if (route.name === 'Home') {
       IconComponent = Icons;
       iconName = 'home-filled';
-    } else if (route.name === 'Category' || route.name === 'Test') {
-      IconComponent = Ionicons;
-      iconName = 'newspaper'; // Material Icons
+    } else if (route.name === 'Library') {
+      IconComponent = CommunityIcon;
+      iconName = 'book-open-page-variant'; // Material Icons
     } else if (route.name === 'Cart') {
       IconComponent = Icons;
       iconName = 'shopping-cart';
@@ -49,9 +49,9 @@ const ProtectedRoutes = () => {
         tabBarStyle: styles.tabarStyle,
       })}>
         <Tab.Screen name="Home" component={Home}/>
-        <Tab.Screen name="Category" component={Category}/>
-        <Tab.Screen name="Test" component={Test}/>
-        <Tab.Screen name="New" component={New}/>
+        <Tab.Screen name="Library" component={Category}/>
+        {/* <Tab.Screen name="Test" component={Test}/>
+        <Tab.Screen name="New" component={New}/> */}
         <Tab.Screen name="Profile" component={ProfileStackScreen}/>
       </Tab.Navigator>
   );
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: 'center',
     justifyContent: 'center',
-    elevation: 5,
+    elevation: 10,
     backgroundColor: '#FAFAFA',
     borderRadius: 50,
     borderColor:'#e0e0e0',

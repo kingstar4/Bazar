@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Pressable } from 'react-native';
 import React from 'react';
 import { Book } from '../../../utils/types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -9,11 +9,12 @@ import { truncateText } from '../../../utils/truncate';
 
 type Props = {
     item: Book | null;
+    onPress?: (book: Book) => void;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
 
-const Authors = ({item}: Props) => {
+const Recommended = ({item, onPress}: Props) => {
 
   if(!item){
     return null;
@@ -52,7 +53,7 @@ const Authors = ({item}: Props) => {
     //     </Text>
     //   </View>
     // </View>
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={() => item && item.volumeInfo && onPress ? onPress(item) : null}>
       <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between', width: '100%'}}>
         <View style={{gap:20, flexDirection:'row', alignItems:'center'}}>
           {/* Book Image */}
@@ -94,11 +95,11 @@ const Authors = ({item}: Props) => {
           <FontAwesome6Icon name="plus" size={20} color="#54408C"/>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
-export default Authors;
+export default Recommended;
 
 const styles = StyleSheet.create({
       container:{
@@ -112,12 +113,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius:20,
         padding: 20,
+        elevation:3,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
       },
 
-     ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    ratingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
     },
     ratingText: {
       marginLeft: 4,

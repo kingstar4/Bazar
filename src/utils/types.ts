@@ -99,7 +99,7 @@ export type PublicStackParamList = {
 export type ProtectedParamList = {
   Home: undefined;
   Profile: undefined;
-  Category: undefined;
+  Library: { search?: string } | undefined;
   Cart: undefined;
 };
 

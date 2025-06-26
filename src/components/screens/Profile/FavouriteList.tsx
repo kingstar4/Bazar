@@ -20,14 +20,16 @@ const FavouriteList = () => {
         data={favourites}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Image
-              source={{ uri: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/80x100' }}
-              style={styles.bookImage}
-            />
-            <View style={styles.infoContainer}>
-              <Text style={styles.title}>{item.volumeInfo.title}</Text>
-              <Text style={styles.author}>{item.volumeInfo.authors?.join(', ') || 'Unknown Author'}</Text>
+          <View>
+            <View style={styles.itemContainer}>
+              <Image
+                source={{ uri: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/80x100' }}
+                style={styles.bookImage}
+              />
+              <View style={styles.infoContainer}>
+                <Text style={styles.title}>{item.volumeInfo.title}</Text>
+                <Text style={styles.author}>{item.volumeInfo.authors?.join(', ') || 'Unknown Author'}</Text>
+              </View>
             </View>
           </View>
         )}
@@ -41,7 +43,9 @@ export default FavouriteList;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    paddingTop: 0, // Remove top padding to eliminate header space
     backgroundColor: '#fff',
   },
   emptyContainer: {
