@@ -6,7 +6,6 @@ import {
   TextInput,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   Dimensions,
   KeyboardAvoidingView,
   Platform,
@@ -20,24 +19,26 @@ import BottomModal from '../../customUI/BottomModal';
 import BottomSheetFilter from '../../customUI/BottomSheetFilter';
 import CardUI from '../../customUI/CardUI';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RouteProp, useRoute } from '@react-navigation/native';
+// import { RouteProp, useRoute } from '@react-navigation/native';
 import { ProtectedParamList } from '../../../utils/types';
 import { NavigationProp } from '@react-navigation/native';
-
+import { RefreshControl } from 'react-native-gesture-handler';
+import { LibraryGridSkeleton, PaginationSkeleton } from '../../customUI/LibrarySkeleton';
+import { useAppStore } from '../../../store/useAppStore';
 type Props = {
   navigation: NavigationProp<ProtectedParamList>;
 }
 
 const {width: screenWidth} = Dimensions.get('window');
 const Library = ({navigation}: Props) => {
-  const route = useRoute<RouteProp<ProtectedParamList, 'Library'>>();
-  const [search, setSearch] = useState('');
+  const  {search, setSearch} = useAppStore((state) => state);
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('fiction');
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isopen, setIsOpen] = useState(false);
   const [sortAZ, setSortAZ] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Debounce search term
   useEffect(() => {
@@ -57,12 +58,13 @@ const Library = ({navigation}: Props) => {
       setIsModalVisible(true);
   };
 
-  // If search param is passed, set it as the search value on mount
-  React.useEffect(() => {
-    if (route.params?.search) {
-      setSearch(route.params.search);
-    }
-  }, [route.params?.search]);
+  const onRefresh = async () =>{
+    setRefreshing(true);
+    refetchBooks();
+    setRefreshing(false);
+
+  };
+
 
   // Use debounced search term for the query
   const activeQuery = debouncedSearch ? debouncedSearch : `subject:${selectedCategory}`;
@@ -75,6 +77,7 @@ const {
   hasNextPage,
   error,
   isError,
+  refetch: refetchBooks,
 } = useInfiniteQuery({
   queryKey: ['books', activeQuery],
   queryFn: ({ pageParam = 0 }) => fetchBooks(activeQuery, pageParam),
@@ -147,7 +150,7 @@ const books = useMemo(() => {
       <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
         <View style={styles.container}>
-
+            
           <View style={styles.row}>
             <TouchableOpacity style={{  padding: 10}} onPress={()=>{navigation.goBack()}}>
               <Ionicons name="chevron-back" size={24} color="#333"  />
@@ -189,7 +192,7 @@ const books = useMemo(() => {
 
 
           {isFetching && !isFetchingNextPage && !data ? (
-              <ActivityIndicator size="large" color="#54408C" style={{ marginVertical: 20 }} />
+              <LibraryGridSkeleton />
             ) : books.length === 0 ? (
               renderEmptyState()
             ) : (
@@ -206,10 +209,11 @@ const books = useMemo(() => {
                     fetchNextPage();
                   }
                 }}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#54408C']} />}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={
                   isFetchingNextPage ? (
-                    <ActivityIndicator size="small" color="#333" style={{ marginVertical: 20 }} />
+                    <PaginationSkeleton />
                   ) : null
                 }
               />

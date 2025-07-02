@@ -2,14 +2,17 @@
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icons from 'react-native-vector-icons/Ionicons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CusButton from '../customUI/CusButton';
 import auth from '@react-native-firebase/auth';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, PublicStackParamList } from '../../utils/types'; // Adjust the path to your navigation types
-// import { useAuthStore } from '../../store/useAuthStore';
 import Toast from 'react-native-toast-message';
 import { useAppStore } from '../../store/useAppStore';
+import { checkBiometric } from '../../utils/checkBiometric';
+// import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+
 
 type LoginProps = {
     navigation: NativeStackNavigationProp<PublicStackParamList & RootStackParamList, 'Login'>;
@@ -20,9 +23,13 @@ const Login = ({navigation}: LoginProps) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const {login} = useAppStore.getState();
 
-    const handleLogin = async()=>{
-        const {login} = useAppStore.getState();
+    useEffect(()=>{
+        checkBiometric();
+    },[]);
+
+    const handleLogin = async() => {
         try {
             const userCredential = await auth().signInWithEmailAndPassword(email, password);
             const token = await userCredential.user.getIdToken();
@@ -52,15 +59,17 @@ const Login = ({navigation}: LoginProps) => {
             } else if (error.code === 'auth/invalid-email') {
                 message = 'Invalid email address. Please check your email.';
                 console.log('Invalid email address');
-            }
-            else {
+            } else if (error.message && error.message.includes('Failed to fetch user profile')) {
+                message = 'Login failed: Unable to fetch your profile. Please contact support or try again later.';
+                console.log('Firestore user fetch failed:', error);
+            } else {
                 console.log('Error logging in:', error);
             }
 
             Toast.show({
                 type: 'error',
                 text1: 'Login Failed',
-                text2: message,
+                text2: error.message || message,
                 position: 'top',
                 visibilityTime: 3000,
                 autoHide: true,
@@ -73,6 +82,36 @@ const Login = ({navigation}: LoginProps) => {
         }
     };
 
+    // const signInWithGoogle = async () => {
+    //     try {
+    //         const userInfo = await GoogleSignin.signIn();
+    //         // Support both possible return shapes for idToken
+    //         const idToken = (userInfo as any).user?.idToken || (userInfo as any).idToken;
+    //         if (!idToken) {
+    //             throw new Error('Google Sign-In failed: No idToken returned');
+    //         }
+    //         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    //         const userCredential = await auth().signInWithCredential(googleCredential);
+
+    //         const user = userCredential.user;
+    //         const token = await user.getIdToken();
+
+    //         await login(token, user.uid); // This will fetch Firestore user and update Zustand
+
+    //          Toast.show({
+    //             type: 'success',
+    //             text1: 'Login Successful',
+    //             position: 'top',
+    //             visibilityTime: 3000,
+    //             autoHide: true,
+    //             topOffset: 30,
+    //             bottomOffset: 40,
+    //         });
+
+    //     } catch (error) {
+    //         console.error('Google Sign-In Error:', error);
+    //     }
+    // };
   return (
     <SafeAreaView>
         <View style={{display:'flex', flexDirection:'column',paddingVertical:20}}>
@@ -112,8 +151,8 @@ const Login = ({navigation}: LoginProps) => {
                 <View style={styles.line}/>
             </View>
             <View>
-                {/* <CusButton onPress={{}} iconSource={require('../../../assets/img/googleicon.png')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Google" textStyle={{color:'#121212'}}/>
-                <CusButton onPress={{}} iconSource={require('../../../assets/img/appleicon.jpg')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Apple" textStyle={{color:'#121212'}}/> */}
+                <CusButton onPress={()=>{}} iconSource={require('../../../assets/img/googleicon.png')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Google" textStyle={{color:'#121212'}}/>
+                 <CusButton onPress={()=>{}} iconSource={require('../../../assets/img/appleicon.jpg')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Apple" textStyle={{color:'#121212'}}/>
             </View>
         </View>
     </SafeAreaView>

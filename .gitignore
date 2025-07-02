@@ -21,6 +21,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 **/.xcode.env.local
+.env
 
 # Android/IntelliJ
 #
@@ -34,6 +35,7 @@ local.properties
 *.keystore
 !debug.keystore
 .kotlin/
+.env
 
 # node.js
 #

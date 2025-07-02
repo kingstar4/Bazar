@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>We use Face ID / Touch ID to securely log you into the app.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Bazar</string>
 	<key>CFBundleExecutable</key>

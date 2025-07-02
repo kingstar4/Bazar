@@ -2,7 +2,6 @@
 import { StyleSheet, View, Animated } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import FastImage from 'react-native-fast-image';
-import { Text } from 'react-native-gesture-handler';
 
 type Props = {}
 
@@ -27,12 +26,13 @@ const Splash = ({}: Props) => {
           useNativeDriver: true,
         }),
       ]),
-      Animated.timing(textFadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
+      // Animated.timing(textFadeAnim, {
+      //   toValue: 1,
+      //   duration: 800,
+      //   useNativeDriver: true,
+      // }),
     ]).start();
+    // No navigation here; let RootNavigator handle the transition
   }, [fadeAnim, scaleAnim, textFadeAnim]);
 
   return (
@@ -42,7 +42,7 @@ const Splash = ({}: Props) => {
         height: 200,
         borderRadius: 25,
         overflow: 'hidden',
-        marginBottom: 20,
+        // marginBottom: 20,
         opacity: fadeAnim,
         transform: [{ scale: scaleAnim }],
       }]}>
@@ -52,16 +52,8 @@ const Splash = ({}: Props) => {
             resizeMode={FastImage.resizeMode.contain}
         />
       </Animated.View>
-      <Animated.View style={[{
-        position: 'absolute',
-        bottom: 30,
-        left: 20,
-        right: 20,
-        opacity: textFadeAnim,
-      }]}>
-        <Text style={styles.text}>Welcome to the app!</Text>
-        <Text style={{color:'#fff', fontSize: 16, textAlign:'center'}}>Loading...</Text>
-      </Animated.View>
+      
+       {/* <LottieView style={{flex:1, width: 200, height: 50, zIndex: 5}} source={require('../../../../assets/img/loader.json')} autoPlay loop  /> */}
     </View>
   );
 };
@@ -78,7 +70,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
   },
 });

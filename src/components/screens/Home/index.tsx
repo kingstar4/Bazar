@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, ActivityIndicator, TextInput} from 'react-native';
-import React, { useEffect } from 'react';
+import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, TextInput, RefreshControl } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import CusHeaders from '../../customUI/CusHeaders';
 import Carousel from './Carousel';
 import CustomMainHeader from '../../customUI/CustomMainHeader';
@@ -12,13 +12,15 @@ import { fetchHomeBooks } from '../../../api/bookApi';
 import { Book } from '../../../utils/types';
 // import Authors from './Recommended';
 import { FlashList } from '@shopify/flash-list';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useNavigation, NavigationProp, CommonActions } from '@react-navigation/native';
 import { ProtectedParamList } from '../../../utils/types';
 import BottomModal from '../../customUI/BottomModal';
 import { useAppStore } from '../../../store/useAppStore';
 import CardUI from '../../customUI/CardUI';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Recommended from './Recommended';
+import { TopBooksSkeleton, CarouselSectionSkeleton, RecommendedSectionSkeleton, VendorsSkeleton } from '../../customUI/HomeSkeleton';
+
 
 
 
@@ -26,14 +28,16 @@ const {width} = Dimensions.get('window');
 
 const Home = () => {
     const navigation = useNavigation<NavigationProp<ProtectedParamList>>();
-    const [presentIndex, setPresentIndex] = React.useState(0);
-    const ref = React.useRef<FlatList>(null);
-    const [search, setSearch] = React.useState('');
+    const [presentIndex, setPresentIndex] = useState(0);
+    // Use correct type for FlatList ref
+    const ref = useRef<FlatList<any>>(null);
+    const [refreshing, setRefreshing] = useState(false);
 
     // Global Zustand State
-    const {selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
+    const {search, setSearch,selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
 
-    const {data: carouselBooks} = useQuery<Book[]>({
+    // Get refetch functions from react-query
+    const {data: carouselBooks, isLoading: isLoadingCarousel, refetch: refetchCarousel} = useQuery<Book[]>({
       queryKey: ['carouselBooks'],
       queryFn: async () => {
         const books = await fetchHomeBooks('trending');
@@ -41,38 +45,37 @@ const Home = () => {
       },
     });
 
-    const {data: topbooks, isLoading} = useQuery<Book[]>({
+    const {data: topbooks, isLoading, refetch: refetchTopbooks} = useQuery<Book[]>({
       queryKey:['topbooks'],
       queryFn: ()=>fetchHomeBooks('best sellers'),
     });
 
-    const {data: history, isLoading: isLoadingHistory} = useQuery<Book[]>({
+    const {data: history, isLoading: isLoadingHistory, refetch: refetchHistory} = useQuery<Book[]>({
       queryKey:['history'],
       queryFn: ()=>fetchHomeBooks('history'),
     });
 
-    const handleBookPress = (book: Book) => {
-            setSelectedBook(book);
-            setIsModalVisible(true);
-    };
+    // Memoize handler to avoid unnecessary re-renders
+    const handleBookPress = React.useCallback((book: Book) => {
+        setSelectedBook(book);
+        setIsModalVisible(true);
+    }, [setSelectedBook, setIsModalVisible]);
     const [isScrolling, setIsScrolling] = React.useState(false);
 
-    // Update scroll function with debouncing
-    const scroll = (event: ScrollEvent): void => {
+    // Memoize scroll function to avoid recreation
+    const scroll = React.useCallback((event: ScrollEvent): void => {
         if (isScrolling) { return; }
-
         setIsScrolling(true);
         const contentOffsetX = event.nativeEvent.contentOffset.x;
         const index = Math.floor((contentOffsetX + width / 2) / width);
-
         if (index !== presentIndex && index >= 0 && index < (carouselBooks?.length || 0)) {
             setPresentIndex(index);
         }
-
         setTimeout(() => setIsScrolling(false), 150);
-    };
+    }, [isScrolling, presentIndex, carouselBooks?.length]);
 
     useEffect(() => {
+        // Auto-advance carousel every 3 seconds
         const interval = setInterval(() => {
             if (carouselBooks && !isScrolling) {
                 const nextIndex = (presentIndex + 1) % carouselBooks.length;
@@ -83,12 +86,19 @@ const Home = () => {
                     viewPosition: 0.5,
                 });
             }
-        }, 3000); // Change slide every 3 seconds
-
+        }, 3000);
+        // Cleanup interval on unmount
         return () => clearInterval(interval);
     }, [presentIndex, carouselBooks, isScrolling]);
 
-    const indicator = () => {
+    // Cleanup isScrolling if component unmounts while scrolling
+    useEffect(() => {
+        return () => setIsScrolling(false);
+    }, []);
+
+
+    // Memoize indicator to avoid unnecessary re-renders
+    const indicator = React.useMemo(() => {
         return carouselBooks?.map((_, index) => (
             <View
                 key={index.toString()}
@@ -103,22 +113,42 @@ const Home = () => {
                 ]}
             />
         ));
-    };
+    }, [carouselBooks, presentIndex]);
 
-    // Add this function to handle search submit
-    const handleSearchSubmit = () => {
-      if (search.trim().length > 0) {
-        // Use jumpTo for tab navigation
-        // @ts-ignore
-        navigation.jumpTo('Library', { search });
+
+    // function to handle search submit
+    // Memoize search submit handler
+    const handleSearchSubmit = React.useCallback(() => {
+      if (search.trim().length > 3) {
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: 'Library',
+            params: { search },
+          })
+        );
       }
-      setSearch('');
 
-    };
+    }, [navigation, search]);
+
+    // Pull-to-refresh handler
+    // Memoize pull-to-refresh handler
+    const onRefresh = React.useCallback(async () => {
+      setRefreshing(true);
+      await Promise.all([
+        refetchCarousel(),
+        refetchTopbooks(),
+        refetchHistory(),
+      ]);
+      setRefreshing(false);
+    }, [refetchCarousel, refetchTopbooks, refetchHistory]);
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#54408C']} />
+        }
+      >
         <CustomMainHeader text="Bazar" icon="search" onPress={()=>{}} icon2="bell"/>
         <View style={styles.searchContainer}>
           <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
@@ -134,26 +164,32 @@ const Home = () => {
             returnKeyType="search"
           />
         </View>
+
         {/* Books Section */}
-        {isLoading ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
         <View style={styles.bookSection}>
           <CusHeaders text="Top of Week"  />
-          <FlashList
-            data={topbooks}
-            renderItem={({ item }) => (
-            <View style={{marginHorizontal:5}}>
-              <CardUI item={item} onPress={handleBookPress} />
-            </View>
+          {isLoading ? (
+            <TopBooksSkeleton />
+          ) : (
+            <FlashList
+              data={topbooks}
+              renderItem={({ item }) => (
+              <View style={{marginHorizontal:5}}>
+                <CardUI item={item} onPress={handleBookPress} />
+              </View>
+            )}
+              horizontal
+              estimatedItemSize={140}
+              contentContainerStyle={styles.flashListContainer}
+              showsHorizontalScrollIndicator={false}
+            />
           )}
-            horizontal
-            estimatedItemSize={140}
-            contentContainerStyle={styles.flashListContainer}
-            showsHorizontalScrollIndicator={false}
-          />
         </View>
-         }
 
-        {carouselBooks && (
+        {/* Carousel Section */}
+        {isLoadingCarousel ? (
+          <CarouselSectionSkeleton />
+        ) : carouselBooks && (
           <>
             <FlatList
               data={carouselBooks}
@@ -176,33 +212,41 @@ const Home = () => {
               })}
             />
             <View style={{flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-              {indicator()}
+              {/* indicator is now a memoized array, not a function */}
+              {indicator}
             </View>
           </>
         )}
 
 
-
         {/* Vendors Section */}
-        <View style={{paddingTop: 10,marginTop:20}}>
+        {isLoadingHistory ? (
+          <VendorsSkeleton />
+        ) :
+        vendors.length > 0 &&
+
+        (<View style={{paddingTop: 10,marginTop:20}}>
           <CusHeaders text="Best Vendors" />
           <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/>
-        </View>
+        </View>)}
 
         {/* Recommended Section */}
-        {isLoadingHistory ? <ActivityIndicator size="large" color="#54408C" style={{marginTop:20}}/> :
         <View style={{paddingBottom: 70}}>
           <CusHeaders text="Recommended"/>
-          <FlatList
-            data={history?.slice(0,5)}
-            renderItem={({item})=> <Recommended item={item} onPress={handleBookPress}/>}
-            scrollEnabled={false}
-            keyExtractor={(item)=>item.id}
-            showsHorizontalScrollIndicator={false}
-            initialNumToRender={4}
-          />
+          {isLoadingHistory ? (
+            <RecommendedSectionSkeleton />
+          ) : (
+            <FlatList
+              data={history?.slice(0,5)}
+              renderItem={({item})=> <Recommended item={item} onPress={handleBookPress}/>}
+              scrollEnabled={false}
+              keyExtractor={(item)=>item.id}
+              showsHorizontalScrollIndicator={false}
+              initialNumToRender={4}
+            />
+          )}
         </View>
-        }
+
 
       </ScrollView>
        {selectedBook && isModalVisible && (

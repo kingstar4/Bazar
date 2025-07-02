@@ -8,6 +8,14 @@ import Toast from 'react-native-toast-message';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
+
+
+GoogleSignin.configure({
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+});
+
 
 const queryCLient = new QueryClient();
 
@@ -16,7 +24,7 @@ const App = () => {
     <QueryClientProvider client={queryCLient}>
       <GestureHandlerRootView style={{ flex: 1}}>
         <SafeAreaView style={{flex: 1, backgroundColor: 'fff'}}>
-          <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+          <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
           <RootNavigator />
           <Toast/>
         </SafeAreaView>

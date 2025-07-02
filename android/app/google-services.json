@@ -12,7 +12,20 @@
           "package_name": "com.bazar"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "637164615695-pjfthp4naiia66f9685saqe6353bvv22.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bazar",
+            "certificate_hash": "77b14e3854c83c25dac5f7077b666820998d28ad"
+          }
+        },
+        {
+          "client_id": "637164615695-2jb2ol6nndjb4jhpbghbbql984tksqs9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBj2gI04iGFenUFlJHkD0AB1FqP0aFyw-s"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "637164615695-2jb2ol6nndjb4jhpbghbbql984tksqs9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -7,6 +7,7 @@ import ProfileCardUI from '../../customUI/ProfileCardUI';
 // import { ActivityIndicator } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { ProfileParamList } from '../../../utils/types';
+import BiometricToggle from '../../customUI/BiometricToggle';
 
 const Profile = () => {
   const { width } = Dimensions.get('window');
@@ -70,8 +71,8 @@ const Profile = () => {
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
         <ProfileCardUI text="My Account" iconName="person"/>
         <ProfileCardUI text="Favourite" onPress={()=> navigation.navigate('FavouriteList')} itemNumber={favouriteCount > 0 ? `${favouriteCount}` : ''} iconName="heart"/>
+        <BiometricToggle/>
         <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses"/>
-
       </View>
     </View>
   );
