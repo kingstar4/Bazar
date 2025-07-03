@@ -10,21 +10,21 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Book } from '../../../utils/types';
 import { fetchBooks } from '../../../api/bookApi';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomModal from '../../customUI/BottomModal';
 import BottomSheetFilter from '../../customUI/BottomSheetFilter';
 import CardUI from '../../customUI/CardUI';
 import { SafeAreaView } from 'react-native-safe-area-context';
-// import { RouteProp, useRoute } from '@react-navigation/native';
-import { ProtectedParamList } from '../../../utils/types';
+import { Book, ProtectedParamList } from '../../../utils/types';
 import { NavigationProp } from '@react-navigation/native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { LibraryGridSkeleton, PaginationSkeleton } from '../../customUI/LibrarySkeleton';
 import { useAppStore } from '../../../store/useAppStore';
+
+
 type Props = {
   navigation: NavigationProp<ProtectedParamList>;
 }
@@ -53,10 +53,10 @@ const Library = ({navigation}: Props) => {
       return () => clearTimeout(timer);
   }, [search]);
 
-  const handleBookPress = (book: Book) => {
+  const handleBookPress = useCallback((book: Book) => {
       setSelectedBook(book);
       setIsModalVisible(true);
-  };
+  }, [setSelectedBook, setIsModalVisible]);
 
   const onRefresh = async () =>{
     setRefreshing(true);
@@ -87,7 +87,15 @@ const {
 });
 
 const books = useMemo(() => {
-  return data?.pages.flatMap((page) => page.items) || [];
+  if (!data?.pages) {return [];}
+
+  // Flatten all pages and remove duplicates based on book ID
+  const allBooks = data.pages.flatMap((page) => page.items) || [];
+  const uniqueBooks = allBooks.filter((book, index, self) =>
+    index === self.findIndex((b) => b.id === book.id)
+  );
+
+  return uniqueBooks;
 }, [data]);
 
     // Function for Empty States
@@ -198,7 +206,7 @@ const books = useMemo(() => {
             ) : (
               <FlatList
                 data={sortedData}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => `${item.id}-${index}`}
                 renderItem={({item})=> <CardUI item={item} onPress={handleBookPress}/>}
                 numColumns={2}
                 columnWrapperStyle={{ justifyContent: 'space-around' }}

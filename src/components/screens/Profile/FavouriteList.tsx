@@ -1,10 +1,22 @@
-import { StyleSheet, Text, View, FlatList, Image } from 'react-native';
-import React from 'react';
-// import { Book } from '../../../utils/types';
+import { StyleSheet, Text, View, FlatList, Image, Pressable } from 'react-native';
+import React, { useCallback, useState } from 'react';
 import { useAppStore } from '../../../store/useAppStore';
+// import { useBookStore } from '../../../store/useBookStore';
+import BottomModal from '../../customUI/BottomModal';
+import { Book } from '../../../utils/types';
+
+
 
 const FavouriteList = () => {
   const favourites = useAppStore(state => state.favourites);
+  // const { isModalVisible, setIsModalVisible, selectedBook, setSelectedBook } = useBookStore((state)=> state);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleBookPress = useCallback((book: Book) => {
+        setSelectedBook(book);
+        setIsModalVisible(true);
+    }, [setSelectedBook, setIsModalVisible]);
+
 
   if (!favourites.length) {
     return (
@@ -14,13 +26,14 @@ const FavouriteList = () => {
     );
   }
 
+
   return (
     <View style={styles.container}>
       <FlatList
         data={favourites}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View>
+          <Pressable onPress={()=> handleBookPress(item)}>
             <View style={styles.itemContainer}>
               <Image
                 source={{ uri: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/80x100' }}
@@ -31,9 +44,12 @@ const FavouriteList = () => {
                 <Text style={styles.author}>{item.volumeInfo.authors?.join(', ') || 'Unknown Author'}</Text>
               </View>
             </View>
-          </View>
+          </Pressable>
         )}
       />
+      {selectedBook && isModalVisible && (
+            <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
+      )}
     </View>
   );
 };

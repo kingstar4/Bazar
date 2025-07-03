@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, TextInput, RefreshControl } from 'react-native';
+import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, TextInput, RefreshControl, TouchableOpacity } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import CusHeaders from '../../customUI/CusHeaders';
 import Carousel from './Carousel';
@@ -16,8 +16,10 @@ import { useNavigation, NavigationProp, CommonActions } from '@react-navigation/
 // import { ProtectedParamList } from '../../../utils/types';
 import BottomModal from '../../customUI/BottomModal';
 import { useAppStore } from '../../../store/useAppStore';
+import { useBookStore } from '../../../store/useBookStore';
 import CardUI from '../../customUI/CardUI';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Recommended from './Recommended';
 import { TopBooksSkeleton, CarouselSectionSkeleton, RecommendedSectionSkeleton, VendorsSkeleton } from '../../customUI/HomeSkeleton';
 
@@ -38,10 +40,10 @@ const Home = () => {
 
     const search = useAppStore((state)=> state.search);
     const setSearch = useAppStore((state)=> state.setSearch);
-    const selectedBook = useAppStore((state)=> state.selectedBook);
-    const setSelectedBook = useAppStore((state)=> state.setSelectedBook);
-    const isModalVisible = useAppStore((state)=> state.isModalVisible);
-    const setIsModalVisible = useAppStore((state)=> state.setIsModalVisible);
+    const selectedBook = useBookStore((state)=> state.selectedBook);
+    const setSelectedBook = useBookStore((state)=> state.setSelectedBook);
+    const isModalVisible = useBookStore((state)=> state.isModalVisible);
+    const setIsModalVisible = useBookStore((state)=> state.setIsModalVisible);
 
 
     // Get refetch functions from react-query
@@ -172,6 +174,9 @@ const Home = () => {
             onSubmitEditing={handleSearchSubmit}
             returnKeyType="search"
           />
+          {search.length > 0 && (<TouchableOpacity style={styles.clearButton} onPress={()=>setSearch('')}>
+            <MaterialIcon name="clear" size={20} color="#666"/>
+          </TouchableOpacity>)}
         </View>
 
         {/* Books Section */}
@@ -304,6 +309,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
 
+  },
+  clearButton:{
+    padding: 8,
+    fontWeight: 'bold',
   },
   searchContainer: {
       flexDirection: 'row',

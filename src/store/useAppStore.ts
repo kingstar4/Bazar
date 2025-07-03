@@ -1,9 +1,8 @@
-// src/store/useAppStore.ts
+
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
 import { Book } from '../utils/types';
-// import auth from '@react-native-firebase/auth';
 
 type User = {
   uid: string;
@@ -29,12 +28,6 @@ type AppState = {
   logout: () => Promise<void>;
   setSearch: (search: string)=> void;
 
-  // For Opening the bottom sheet
-  isModalVisible: boolean;
-  selectedBook: Book | null;
-  setIsModalVisible: (visible:boolean)=>void
-  setSelectedBook: (book: Book | null)=> void
-  reset: ()=> void
 
   // Favourites
   addFavourite: (book: Book) => void;
@@ -52,8 +45,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   isAuthenticated: false,
   search: '',
   user: null,
-  isModalVisible:false,
-  selectedBook: null,
   isFavourite: false,
   favourites: [],
   isBiometricEnabled: false,
@@ -149,15 +140,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ isAuthenticated: false });
   },
 
+  setBiometricEnabled: async (enabled) => {
+    await AsyncStorage.setItem('isBiometricEnabled', JSON.stringify(enabled));
+    set({ isBiometricEnabled: enabled });
+  },
+
   setUser: (user) => {
     AsyncStorage.setItem('userInfo', JSON.stringify(user));
     set({ user });
   },
-
-  setIsModalVisible: (visible)=> set({isModalVisible: visible}),
-  setSelectedBook: (book)=> set({selectedBook: book}),
-
-  reset: ()=> set({isModalVisible: false, selectedBook: null}),
 
   addFavourite: (book) => {
     const { favourites } = get();
@@ -181,9 +172,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     return favourites.some(b => b.id === bookId);
   },
 
-  setBiometricEnabled: async (enabled) => {
-    await AsyncStorage.setItem('isBiometricEnabled', JSON.stringify(enabled));
-    set({ isBiometricEnabled: enabled });
-  },
+
 
 }));

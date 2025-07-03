@@ -106,7 +106,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
 
   return (
     <BottomSheet
-      handleIndicatorStyle={{backgroundColor:'#ddd', width: 60, height: 5}}
+      handleIndicatorStyle={{backgroundColor:'#ddd', width: 40, height: 4}}
       handleStyle={styles.handleStyle}
       backgroundStyle={styles.sheetBackground}
       snapPoints={snapPoints}

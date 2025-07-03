@@ -1,8 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import IonIcon from 'react-native-vector-icons/Ionicons';
 import { Book } from '../../utils/types';
 import { getColorFromId } from '../../utils/getColorFromID';
 import FastImage from 'react-native-fast-image';
@@ -35,7 +33,7 @@ const CardUI = ({item, onPress}:CardUIProps) => {
               <FastImage
                 source={{
                   uri: imageUrl,
-                  priority: FastImage.priority.normal,
+                  priority: FastImage.priority.high,
                 }}
                 style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
                 resizeMode={FastImage.resizeMode.cover}
