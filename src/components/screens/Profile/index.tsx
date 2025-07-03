@@ -1,41 +1,47 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, ActivityIndicator, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { launchImageLibrary } from 'react-native-image-picker';
 import { useAppStore } from '../../../store/useAppStore';
 import ProfileCardUI from '../../customUI/ProfileCardUI';
-// import { ActivityIndicator } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { ProfileParamList } from '../../../utils/types';
 import BiometricToggle from '../../customUI/BiometricToggle';
+import { avatarOptions } from '../../data/avatar';
+import firestore from '@react-native-firebase/firestore';
+import { FlashList } from '@shopify/flash-list';
 
 const Profile = () => {
   const { width } = Dimensions.get('window');
-  const [avatar, setAvatar] = useState<string | null>(null);
-  const { logout } = useAppStore();
-  const user = useAppStore((state)=> state.user);
+  const { logout, user, setUser } = useAppStore();
   const favouriteCount = useAppStore((state) => state.favourites.length);
   const navigation = useNavigation<NavigationProp<ProfileParamList>>();
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-  console.log(' Zustand user:', user);
-}, [user]);
+    console.log('Zustand user:', user);
+  }, [user]);
 
-  const pickImage = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'photo',
-      quality: 1,
-      selectionLimit: 1,
+  const handleSelectAvatar = async (avatarName: string) => {
+    if (!user) {return;}
+    await firestore().collection('users').doc(user.uid).update({
+      profilePicture: avatarName,
     });
-
-    if (!result.didCancel && result.assets && result.assets[0]?.uri) {
-      setAvatar(result.assets[0].uri);
-    }
+    const updatedUser = { ...user, profilePicture: avatarName };
+    setUser(updatedUser);
+    setModalVisible(false);
   };
 
-  // const truncateEmail = (email: string) => {
-  //   return email.length > 25 ? `${email.substring(0, 22)}...` : email;
-  // };
+  const handleResetAvatar = async () => {
+    if (!user) {return;}
+    await firestore().collection('users').doc(user.uid).update({
+      profilePicture: '',
+    });
+    const updatedUser = { ...user, profilePicture: '' };
+    setUser(updatedUser);
+    setModalVisible(false);
+  };
+
+  const selectedAvatar = avatarOptions.find(a => a.name === user?.profilePicture);
 
   return (
     <View style={styles.container}>
@@ -44,36 +50,69 @@ const Profile = () => {
       </View>
       <View style={styles.profileSection}>
         <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
-            {avatar ? (
-              <Image source={{ uri: avatar }} style={styles.avatar} />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Text>Add Photo</Text>
-              </View>
-            )}
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.avatarContainer}>
+            <Image
+              source={selectedAvatar?.source || require('../../../../assets/img/avatar1.png')}
+              style={styles.avatar}
+            />
+            <Text style={{ textAlign: 'center', marginTop: 5 }}>Change Photo</Text>
+          </TouchableOpacity>
 
-          {user ?
-            (<View style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 20 }}>
-            <Text style={styles.email}>
-              {user.name}
-            </Text>
-            <Text style={{letterSpacing:1, fontWeight:500}}>{user.phone}</Text>
-          </View>)
-          : <ActivityIndicator size="large" color="#54408C" style={{alignSelf:'center', marginVertical:16}}/>
-        }
+          {user ? (
+            <View style={{ flex: 1, flexDirection: 'column', alignItems: 'flex-start', paddingLeft: 20 }}>
+              <Text style={styles.email}>{user.name}</Text>
+              <Text style={{letterSpacing:1, fontWeight:'500'}}>{user.phone}</Text>
+            </View>
+          ) : <ActivityIndicator size="large" color="#54408C" style={{alignSelf:'center', marginVertical:16}} />}
         </View>
         <TouchableOpacity style={styles.logoutButton} onPress={logout}>
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
+
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
-        <ProfileCardUI text="My Account" iconName="person"/>
-        <ProfileCardUI text="Favourite" onPress={()=> navigation.navigate('FavouriteList')} itemNumber={favouriteCount > 0 ? `${favouriteCount}` : ''} iconName="heart"/>
-        <BiometricToggle/>
-        <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses"/>
+        <ProfileCardUI text="My Account" iconName="person" />
+        <ProfileCardUI text="Favourite" onPress={() => navigation.navigate('FavouriteList')} itemNumber={favouriteCount > 0 ? `${favouriteCount}` : ''} iconName="heart" />
+        <BiometricToggle />
+        <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses" />
       </View>
+
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Choose Your Avatar</Text>
+
+            <FlashList
+              data={avatarOptions}
+              keyExtractor={(item) => item.name}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              estimatedItemSize={10}
+              renderItem={({ item }) => {
+                return (
+                  <TouchableOpacity key={item.name} onPress={() => handleSelectAvatar(item.name)} style={styles.avatarWrapper}>
+                    <Image
+                      source={item.source}
+                      style={[
+                        styles.modalAvatar,
+                        user?.profilePicture === item.name && { borderColor: '#54408C', borderWidth: 2 },
+                      ]}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+            />
+
+            <TouchableOpacity onPress={handleResetAvatar}>
+              <Text style={{ textAlign: 'center', marginTop: 10, color: 'red' }}>Reset to Default</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+              <Text style={{ color: '#fff', fontWeight: '600' }}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -84,13 +123,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-
   },
   profileSection: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     alignItems: 'center',
-    // marginTop: 20,
     paddingHorizontal: 30,
     borderTopWidth: 1,
     borderBottomWidth: 1,
@@ -98,6 +135,8 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     marginVertical: 10,
+    alignItems: 'center',
+
   },
   avatar: {
     width: 80,
@@ -123,5 +162,43 @@ const styles = StyleSheet.create({
     color: '#ff4444',
     fontSize: 16,
     fontWeight: '600',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 40,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  avatarRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  avatarWrapper: {
+    marginHorizontal: 8,
+  },
+  modalAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+  },
+  closeButton: {
+    backgroundColor: '#54408C',
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
   },
 });

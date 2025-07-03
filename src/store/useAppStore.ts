@@ -10,7 +10,7 @@ type User = {
   name: string;
   phone: string;
   email: string;
-  // profilePicture?: string;
+  profilePicture?: string;
 }
 
 type AppState = {
@@ -128,7 +128,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         name: userData.name,
         phone: userData.phone,
         email: userData.email,
-        // profilePicture: userData.profilePicture,
+        profilePicture: userData.profilePicture,
       };
 
       await AsyncStorage.setItem('userInfo', JSON.stringify(user));

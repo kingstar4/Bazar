@@ -25,7 +25,7 @@ const BiometricToggle = () => {
               <Text style={{fontSize:16, fontWeight:'600', color:'#121212'}}>Biometric</Text>
           </View>
           <View>
-              <Switch trackColor={{ false: '#767577', true: '#54408C' }} value={isEnabled} onValueChange={handleToggle} />
+              <Switch value={isEnabled} onValueChange={handleToggle} />
           </View>
       </View>
   );

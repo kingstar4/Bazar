@@ -145,7 +145,7 @@ const Login = ({navigation}: LoginProps) => {
                 <Text style={[styles.txt,{color:'#A6A6A6'}]}>Don't have an account? </Text>
                 <Text style={[styles.txt,{color:'#54408C'}]} onPress={()=>navigation.replace('Register')}> Register</Text>
             </View>
-            <View style={{display:'flex', flexDirection:'row', alignItems:'center', marginVertical:16, width:375, justifyContent:'space-between'}}>
+            {/* <View style={{display:'flex', flexDirection:'row', alignItems:'center', marginVertical:16, width:375, justifyContent:'space-between'}}>
                 <View style={styles.line} />
                 <Text style={{color:'#A6A6A6', fontWeight:'400', fontSize:14, lineHeight:19.6}}>Or with</Text>
                 <View style={styles.line}/>
@@ -153,7 +153,7 @@ const Login = ({navigation}: LoginProps) => {
             <View>
                 <CusButton onPress={()=>{}} iconSource={require('../../../assets/img/googleicon.png')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Google" textStyle={{color:'#121212'}}/>
                  <CusButton onPress={()=>{}} iconSource={require('../../../assets/img/appleicon.jpg')} buttonStyle={{backgroundColor:'transparent'}} text="Sign in with Apple" textStyle={{color:'#121212'}}/>
-            </View>
+            </View> */}
         </View>
     </SafeAreaView>
   );

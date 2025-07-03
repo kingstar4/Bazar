@@ -150,7 +150,7 @@ const books = useMemo(() => {
       <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
         <View style={styles.container}>
-            
+
           <View style={styles.row}>
             <TouchableOpacity style={{  padding: 10}} onPress={()=>{navigation.goBack()}}>
               <Ionicons name="chevron-back" size={24} color="#333"  />

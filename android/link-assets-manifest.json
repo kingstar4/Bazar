@@ -14,10 +14,6 @@
       "sha1": "943c38fa3c44e48acc89c9547e30dc57991cb150"
     },
     {
-      "path": "assets/img/Animation - 1751269552260.json",
-      "sha1": "80f676547810c7e109649b59e39d99a62723bb1c"
-    },
-    {
       "path": "assets/img/appleicon.jpg",
       "sha1": "4bda9b40c53eab249ae4721a872b7a2c40b2cd05"
     },
@@ -26,16 +22,20 @@
       "sha1": "0050c98fb887fb03d80de5313e6aa8d6d4d12ea5"
     },
     {
-      "path": "assets/img/avatar.png",
-      "sha1": "29d47c31f5c1ea9d55e37b2f4f862c3919f7ac52"
+      "path": "assets/img/avatar1.png",
+      "sha1": "3c1ec5a2e0e9f35c577850d8b538f9a82bcf982d"
     },
     {
-      "path": "assets/img/b2.jpg",
-      "sha1": "18461db95a66275699337a4875c5d55465b6964f"
+      "path": "assets/img/avatar2.png",
+      "sha1": "47220eb2db1170195a8c667e1d0f8214e9b06a01"
     },
     {
-      "path": "assets/img/b3.jpg",
-      "sha1": "3b55aaf652b0825fa617817f7932c90dea156f27"
+      "path": "assets/img/avatar3.png",
+      "sha1": "27a5b9cb46fbdfacc0be4e116f2e22ef19b8f891"
+    },
+    {
+      "path": "assets/img/avatar4.png",
+      "sha1": "8ca9324791c2ff8fe21569ec05f067a2f0d6b69b"
     },
     {
       "path": "assets/img/congrats.png",
@@ -46,8 +46,8 @@
       "sha1": "9e06222a9c1e78ccc8b7da59c4fc1311b25f6ddd"
     },
     {
-      "path": "assets/img/h1.png",
-      "sha1": "f28ff290b0289bf460d890243dfdb3d46641aadf"
+      "path": "assets/img/loader.json",
+      "sha1": "80f676547810c7e109649b59e39d99a62723bb1c"
     },
     {
       "path": "assets/img/logo.png",
@@ -56,14 +56,6 @@
     {
       "path": "assets/img/nb1.jpg",
       "sha1": "105ed0e694c3e1a60cdbd5a46aab51ac1fe0803a"
-    },
-    {
-      "path": "assets/img/nb2.jpg",
-      "sha1": "3a3b65a532f28c75bbcf88b81a2a5c027dc36333"
-    },
-    {
-      "path": "assets/img/nb3.jpg",
-      "sha1": "de6e62b86936d32339be6a3c571f8fcf94d3da34"
     },
     {
       "path": "assets/img/slider1.png",

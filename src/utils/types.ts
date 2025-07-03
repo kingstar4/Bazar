@@ -97,10 +97,14 @@ export type PublicStackParamList = {
 
 // Screens inside AppStack (ProtectedRoutes)
 export type ProtectedParamList = {
-  Home: undefined;
-  Profile: undefined;
+  HomeStack: HomeParamList;
+  Profile: ProfileParamList;
   Library: { search?: string } | undefined;
-  Cart: undefined;
+};
+
+export type HomeParamList = {
+  Home: undefined;
+  Notification: undefined;
 };
 
 export type ProfileParamList ={

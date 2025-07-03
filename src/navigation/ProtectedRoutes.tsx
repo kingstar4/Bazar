@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Home from '../components/screens/Home';
+// import Home from '../components/screens/Home';
 // import Category from '../components/screens/Library';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Keyboard} from 'react-native';
 // import Test from '../components/screens/Test';
 // import New from '../components/screens/New';
 import ProfileStackScreen from '../navigation/ProfileStack';
 import Library from '../components/screens/Library';
+import HomeStack from './NotificationStack';
 
 
 const Tab = createBottomTabNavigator();
@@ -40,6 +41,28 @@ const getTabBarIcon = (route: { name: string }) => ({ color, size }: { color: st
 };
 
 const ProtectedRoutes = () => {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener?.remove();
+      keyboardDidShowListener?.remove();
+    };
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -47,9 +70,9 @@ const ProtectedRoutes = () => {
         tabBarActiveTintColor: '#54408C',
         tabBarInactiveTintColor: 'gray',
         headerShown: false,
-        tabBarStyle: styles.tabarStyle,
+        tabBarStyle: isKeyboardVisible ? { display: 'none' } : styles.tabarStyle,
       })}>
-        <Tab.Screen name="Home" component={Home}/>
+        <Tab.Screen name="Home" component={HomeStack}/>
         <Tab.Screen name="Library" component={Library}/>
         {/* <Tab.Screen name="Test" component={Test}/>
         <Tab.Screen name="New" component={New}/> */}

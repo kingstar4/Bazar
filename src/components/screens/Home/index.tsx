@@ -6,14 +6,14 @@ import Carousel from './Carousel';
 import CustomMainHeader from '../../customUI/CustomMainHeader';
 import { vendors } from '../../data/dataTables';
 import Vendors from './Vendors';
-import { ScrollEvent } from '../../../utils/types';
+import { HomeParamList, ScrollEvent } from '../../../utils/types';
 import { useQuery } from '@tanstack/react-query';
 import { fetchHomeBooks } from '../../../api/bookApi';
 import { Book } from '../../../utils/types';
 // import Authors from './Recommended';
 import { FlashList } from '@shopify/flash-list';
 import { useNavigation, NavigationProp, CommonActions } from '@react-navigation/native';
-import { ProtectedParamList } from '../../../utils/types';
+// import { ProtectedParamList } from '../../../utils/types';
 import BottomModal from '../../customUI/BottomModal';
 import { useAppStore } from '../../../store/useAppStore';
 import CardUI from '../../customUI/CardUI';
@@ -27,14 +27,22 @@ import { TopBooksSkeleton, CarouselSectionSkeleton, RecommendedSectionSkeleton, 
 const {width} = Dimensions.get('window');
 
 const Home = () => {
-    const navigation = useNavigation<NavigationProp<ProtectedParamList>>();
+    const navigation = useNavigation<NavigationProp<HomeParamList>>();
     const [presentIndex, setPresentIndex] = useState(0);
     // Use correct type for FlatList ref
     const ref = useRef<FlatList<any>>(null);
     const [refreshing, setRefreshing] = useState(false);
+    const [isScrolling, setIsScrolling] = React.useState(false);
 
     // Global Zustand State
-    const {search, setSearch,selectedBook, setSelectedBook, isModalVisible, setIsModalVisible} = useAppStore();
+
+    const search = useAppStore((state)=> state.search);
+    const setSearch = useAppStore((state)=> state.setSearch);
+    const selectedBook = useAppStore((state)=> state.selectedBook);
+    const setSelectedBook = useAppStore((state)=> state.setSelectedBook);
+    const isModalVisible = useAppStore((state)=> state.isModalVisible);
+    const setIsModalVisible = useAppStore((state)=> state.setIsModalVisible);
+
 
     // Get refetch functions from react-query
     const {data: carouselBooks, isLoading: isLoadingCarousel, refetch: refetchCarousel} = useQuery<Book[]>({
@@ -60,7 +68,8 @@ const Home = () => {
         setSelectedBook(book);
         setIsModalVisible(true);
     }, [setSelectedBook, setIsModalVisible]);
-    const [isScrolling, setIsScrolling] = React.useState(false);
+
+
 
     // Memoize scroll function to avoid recreation
     const scroll = React.useCallback((event: ScrollEvent): void => {
@@ -149,7 +158,7 @@ const Home = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#54408C']} />
         }
       >
-        <CustomMainHeader text="Bazar" icon="search" onPress={()=>{}} icon2="bell"/>
+        <CustomMainHeader text="Bazar" icon="search" onPress={()=>{navigation.navigate('Notification');}} icon2="bell"/>
         <View style={styles.searchContainer}>
           <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
           <TextInput
@@ -248,11 +257,10 @@ const Home = () => {
         </View>
 
 
-      </ScrollView>
-       {selectedBook && isModalVisible && (
-          <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
-        )}
-
+        </ScrollView>
+      {selectedBook && isModalVisible && (
+        <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
+      )}
     </SafeAreaView>
   );
 };
