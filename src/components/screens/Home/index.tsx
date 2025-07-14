@@ -45,7 +45,6 @@ const Home = () => {
     const isModalVisible = useBookStore((state)=> state.isModalVisible);
     const setIsModalVisible = useBookStore((state)=> state.setIsModalVisible);
 
-
     // Get refetch functions from react-query
     const {data: carouselBooks, isLoading: isLoadingCarousel, refetch: refetchCarousel} = useQuery<Book[]>({
       queryKey: ['carouselBooks'],
@@ -196,6 +195,7 @@ const Home = () => {
               estimatedItemSize={140}
               contentContainerStyle={styles.flashListContainer}
               showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => item.id + index}
             />
           )}
         </View>
@@ -207,12 +207,12 @@ const Home = () => {
           <>
             <FlatList
               data={carouselBooks}
-              renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>}
+              renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>} 
               onScrollBeginDrag={() => setIsScrolling(true)}
               onScrollEndDrag={() => setIsScrolling(false)}
               onMomentumScrollEnd={scroll}
               ref={ref}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.id }
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
@@ -241,7 +241,8 @@ const Home = () => {
 
         (<View style={{paddingTop: 10,marginTop:20}}>
           <CusHeaders text="Best Vendors" />
-          <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/>
+          {/* <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/> */}
+          <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item, index)=>item.id + index} showsHorizontalScrollIndicator={false}/>
         </View>)}
 
         {/* Recommended Section */}
@@ -251,10 +252,10 @@ const Home = () => {
             <RecommendedSectionSkeleton />
           ) : (
             <FlatList
-              data={history?.slice(0,5)}
+              data={history ? Array.from(new Map(history.slice(0, 5).map(item => [item.id, item])).values()) : []}
               renderItem={({item})=> <Recommended item={item} onPress={handleBookPress}/>}
               scrollEnabled={false}
-              keyExtractor={(item)=>item.id}
+              keyExtractor={(item, index)=> item.id + index}
               showsHorizontalScrollIndicator={false}
               initialNumToRender={4}
             />

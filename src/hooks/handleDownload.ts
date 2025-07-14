@@ -187,7 +187,7 @@ export const downloadFile = async (
 ): Promise<string> => {
   try {
     // Determine file extension from URL
-    const fileExtension = url.toLowerCase().endsWith('.pdf') 
+    const fileExtension = url.toLowerCase().endsWith('.pdf')
       ? '.pdf'
       : url.toLowerCase().endsWith('.epub')
         ? '.epub'
@@ -257,7 +257,7 @@ export const downloadFile = async (
               text: 'Replace',
               onPress: async () => {
                 try {
-                  const path = await performDownload(url, downloadDest, fileExtension);
+                  const path = await performDownload(url, downloadDest);
                   resolve(path);
                 } catch (error) {
                   reject(error);
@@ -271,7 +271,7 @@ export const downloadFile = async (
     }
 
     // Perform the download
-    return await performDownload(url, downloadDest, fileExtension);
+    return await performDownload(url, downloadDest);
 
   } catch (error) {
     console.error('Error downloading file:', error);
@@ -294,7 +294,7 @@ export const downloadFile = async (
 const performDownload = async (
   url: string,
   destination: string,
-  fileExtension: string
+  // fileExtension: string
 ): Promise<string> => {
   // Show download started toast
   Toast.show({

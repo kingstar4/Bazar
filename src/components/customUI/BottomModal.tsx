@@ -2,7 +2,7 @@
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Alert, Linking, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import BottomSheet, {
   BottomSheetScrollView,
@@ -16,6 +16,7 @@ import { downloadFile, downloadAndOpenFile } from '../../hooks/handleDownload';
 import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-toast-message';
 import { useAppStore } from '../../store/useAppStore';
+import { openInAppBrowser } from '../../utils/openInAppBrowser';
 
 
 type Props = {
@@ -30,7 +31,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   const addFavourite = useAppStore(state => state.addFavourite);
   const removeFavourite = useAppStore(state => state.removeFavourite);
   const isBookFavourite = useAppStore(state => state.isBookFavourite);
-
+   const [expanded, setExpanded] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -90,15 +91,20 @@ const BottomModal = ({onClose, book, visible}: Props) => {
   const epubUrl = book.accessInfo?.epub?.downloadLink;
   const pdfUrl = book.accessInfo?.pdf?.downloadLink;
   const downloadUrl = epubUrl || pdfUrl;
+  const MAX_LENGTH = 150;
+  const text = description || 'No description';
+  const isTextLong = text.length > MAX_LENGTH;
+
+  const toggleExpanded = () => setExpanded(prev => !prev);
 
   // Check if downloads are available
-  const isPdfAvailable = book.accessInfo?.pdf?.isAvailable && pdfUrl;
-  const isEpubAvailable = book.accessInfo?.epub?.isAvailable && epubUrl;
+  // const isPdfAvailable = book.accessInfo?.pdf?.isAvailable && pdfUrl;
+  // const isEpubAvailable = book.accessInfo?.epub?.isAvailable && epubUrl;
 
 
   const handleReadOnline = () => {
     if (book.accessInfo?.webReaderLink) {
-      Linking.openURL(book.accessInfo.webReaderLink);
+      openInAppBrowser(book.accessInfo.webReaderLink);
     } else {
       Alert.alert('Read Online not available', 'This book is not available for online reading.');
     }
@@ -192,7 +198,14 @@ const BottomModal = ({onClose, book, visible}: Props) => {
 
             <View style={styles.descriptionSection}>
               <Text style={styles.sectionTitle}>Book Description</Text>
-              <Text style={styles.descriptionText}>{description || 'No description available.'}</Text>
+              <Text style={styles.descriptionText}>
+                {isTextLong && !expanded ? text.slice(0, MAX_LENGTH) + '...' : text}
+              </Text>
+              {isTextLong &&
+                <TouchableOpacity onPress={toggleExpanded}>
+                  <Text style={{fontWeight:600, textAlign:'auto', fontStyle:'italic', color:'#54408C'}}>{expanded ? 'View Less' : 'View More'}</Text>
+                </TouchableOpacity>
+              }
             </View>
 
             <View style={styles.detailsSection}>
@@ -237,7 +250,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
                         onPress: async () => {
                           try {
                             // If both formats are available, show a choice dialog
-                            if (isPdfAvailable && isEpubAvailable) {
+                            if (downloadUrl) {
                               Alert.alert(
                                 'Choose Format',
                                 'Which format would you like to download?',
@@ -288,7 +301,12 @@ const BottomModal = ({onClose, book, visible}: Props) => {
                               });
                             }
                           } catch (error) {
-                            // Error handling is done in the downloadFile function
+
+                            Toast.show({
+                                type: 'error',
+                                text1: 'oops',
+                                text2: 'Unable to download the book',
+                              });
                           }
                         },
                       },
@@ -297,7 +315,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
                         text: 'Download & Open',
                         onPress: async () => {
                           try {
-                            if (isPdfAvailable && isEpubAvailable) {
+                            if (downloadUrl) {
                               Alert.alert(
                                 'Choose Format',
                                 'Which format would you like to download and open?',
@@ -320,7 +338,11 @@ const BottomModal = ({onClose, book, visible}: Props) => {
                               await downloadAndOpenFile(downloadUrl, title);
                             }
                           } catch (error) {
-                            // Error handling is done in the downloadAndOpenFile function
+                            Toast.show({
+                                type: 'error',
+                                text1: 'oops',
+                                text2: 'Unable to Open the book',
+                              });
                           }
                         },
                       },
