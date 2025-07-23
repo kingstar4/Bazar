@@ -77,10 +77,11 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginVertical: 16,
     backgroundColor: '#f8f8f8',
     borderRadius: 8,
     padding: 12,
+
   },
   bookImage: {
     width: 60,

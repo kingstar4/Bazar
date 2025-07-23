@@ -11,7 +11,7 @@ type CardUIProps = {
 }
 
 const CardUI = ({item, onPress}:CardUIProps) => {
-    const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
+    const imageUrl = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/135x150';
     const sale = item.saleInfo;
     const authors = item.volumeInfo?.authors;
     const getPriceText = () => {
@@ -33,7 +33,7 @@ const CardUI = ({item, onPress}:CardUIProps) => {
               <FastImage
                 source={{
                   uri: imageUrl,
-                  priority: FastImage.priority.high,
+                  priority: FastImage.priority.normal,
                 }}
                 style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
                 resizeMode={FastImage.resizeMode.cover}

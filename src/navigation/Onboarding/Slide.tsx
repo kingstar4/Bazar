@@ -18,11 +18,14 @@ const { width } = Dimensions.get('window');
 const Slide = ({item, skipFunction}: SlideProps) => {
   return (
     <View style={{ backgroundColor: COLORS.primary , flex: 1, paddingHorizontal: 14, width:width, paddingTop:14}}>
-        <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', padding: 20}}>
-            <TouchableOpacity onPress={skipFunction}>
-                <Text style={{color:COLORS.white, fontSize:17, fontWeight:500}}>Skip</Text>
-            </TouchableOpacity>
-        </View>
+
+        {item.slideImg.length !== -1 && (
+            <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', padding: 20}}>
+                <TouchableOpacity onPress={skipFunction}>
+                    <Text style={{color:COLORS.white, fontSize:17, fontWeight:500}}>Skip</Text>
+                </TouchableOpacity>
+            </View>
+        )}
         <View style={{ alignItems: 'center', justifyContent: 'center'}}>
             <Image source={item.slideImg} style={{width: 320, height: 320, top:20, alignSelf:'center', justifyContent:'center'}}/>
             <View style={{alignItems: 'center', justifyContent: 'center', marginTop:30}}>

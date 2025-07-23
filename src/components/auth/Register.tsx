@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, View,TextInput, TouchableOpacity, Alert} from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { isCredibleEmail, filterDigitsOnly } from '../../utils/validateEmailAndPhone';
 import React, {useEffect, useState} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -67,6 +68,17 @@ const Register = ({navigation}: RegisterProps) => {
             navigation.replace('Login');
         }
         catch(err:any){
+          const isValidEmail = isCredibleEmail(email);
+          if (!isValidEmail) {
+              Toast.show({
+                  type: 'error',
+                  text1: 'Invalid email format',
+                  position: 'top',
+                  visibilityTime: 3000,
+                  autoHide: true,
+                  topOffset: 30,
+              });
+          }
             console.log(err.nativeErrorMessage || err.message);
 
             let errorMessage = 'Registration Failed';
@@ -103,71 +115,92 @@ const Register = ({navigation}: RegisterProps) => {
 
     },[confirmPassword, email, name, password, phone]);
 
+
   return (
-    <SafeAreaView>
-        <View style={{display:'flex', flexDirection:'column'}}>
-            <View style={{paddingHorizontal:20, marginTop:20}}>
-                <TouchableOpacity onPress={()=>navigation.replace('Login')}>
-                    <FontAwesome6 name="arrow-left" size={24} color="black"/>
-                </TouchableOpacity>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}} keyboardShouldPersistTaps="handled">
+        <View style={{display:'flex', flexDirection:'column', minHeight: '100%'}}>
+          <View style={{paddingHorizontal:20, marginTop:20}}>
+            <TouchableOpacity onPress={()=>navigation.replace('Login')}>
+              <FontAwesome6 name="arrow-left" size={24} color="black"/>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <View style={{display:'flex', flexDirection:'column', alignItems:'flex-start', marginVertical:16, marginTop:20, paddingHorizontal:20}}>
+              <Text style={{fontSize:24, fontWeight:700, lineHeight:32.4, paddingVertical:10}}>Sign Up</Text>
+              <Text style={{fontWeight:400, fontSize:16, lineHeight:24, color:'#A6A6A6'}}>Create account and choose favorite menu</Text>
             </View>
-            <View>
-                <View style={{display:'flex', flexDirection:'column', alignItems:'flex-start', marginVertical:16, marginTop:20, paddingHorizontal:20}}>
-                    <Text style={{fontSize:24, fontWeight:700, lineHeight:32.4, paddingVertical:10}}>Sign Up</Text>
-                    <Text style={{fontWeight:400, fontSize:16, lineHeight:24, color:'#A6A6A6'}}>Create account and choose favorite menu</Text>
-                </View>
-                <View style={styles.textBox}>
-                    <TextInput style={styles.txtInput} placeholder="Your Name" keyboardType="default" value={name} onChangeText={(text)=>setName(text)}/>
-                </View>
-                <View style={styles.textBox}>
-                    <TextInput style={styles.txtInput} placeholder="Your Phone Number" keyboardType="numeric" value={phone} onChangeText={(text)=>setPhone(text)}/>
-                </View>
-                <View style={styles.textBox}>
-                    <TextInput style={styles.txtInput} placeholder="Your Email" keyboardType="email-address" value={email} onChangeText={(text)=>setEmail(text)}/>
-                </View>
-                <View style={styles.textBox}>
-                    <TextInput style={styles.txtInput} placeholder="Your Password" value={password} secureTextEntry={!showPassword} onChangeText={(text)=>setPassword(text)}/>
-                    <TouchableOpacity style={styles.alignIcon} onPress={() => setShowPassword(!showPassword)}>
-                        {showPassword ? <Icons name="eye-outline" size={24} color="grey"/> : <Icons name="eye-off-outline" size={24} color="grey"/>}
-                    </TouchableOpacity>
-                </View>
-                {password.length > 0 && (
-                    <View style={styles.ruleList}>
-                        {validatePass.map((rule) => {
-                        const passed = rule.test(password);
-                        return (
-                            <View key={rule.key} style={styles.ruleItem}>
-                                <Icons
-                                    name={passed ? 'checkmark-circle' : 'close-circle'}
-                                    size={18}
-                                    color={passed ? 'green' : 'red'}
-                                    style={{ marginRight: 8 }}
-                                />
-                                <Text style={{ color: passed ? 'green' : 'red' }}>{rule.label}</Text>
-                            </View>
-                        );
-                        })}
+            <View style={styles.textBox}>
+              <TextInput style={styles.txtInput} placeholder="Your Name" placeholderTextColor={'#7b8aa0'} keyboardType="default" value={name} onChangeText={(text)=>setName(text)}/>
+            </View>
+            <View style={styles.textBox}>
+              <TextInput
+                style={styles.txtInput}
+                placeholder="Your Phone Number"
+                placeholderTextColor={'#7b8aa0'}
+                keyboardType="numeric"
+                value={phone}
+                onChangeText={(text) => {
+                  setPhone(filterDigitsOnly(text));
+                }}
+                maxLength={15}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <TextInput
+                style={styles.txtInput}
+                placeholder="Your Email"
+                placeholderTextColor={'#7b8aa0'}
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.textBox}>
+              <TextInput style={styles.txtInput} placeholder="Your Password" placeholderTextColor={'#7b8aa0'} value={password} secureTextEntry={!showPassword} onChangeText={(text)=>setPassword(text)}/>
+              <TouchableOpacity style={styles.alignIcon} onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? <Icons name="eye-outline" size={24} color="grey"/> : <Icons name="eye-off-outline" size={24} color="grey"/>}
+              </TouchableOpacity>
+            </View>
+            {password.length > 0 && (
+              <View style={styles.ruleList}>
+                {validatePass.map((rule) => {
+                  const passed = rule.test(password);
+                  return (
+                    <View key={rule.key} style={styles.ruleItem}>
+                      <Icons
+                        name={passed ? 'checkmark-circle' : 'close-circle'}
+                        size={18}
+                        color={passed ? 'green' : 'red'}
+                        style={{ marginRight: 8 }}
+                      />
+                      <Text style={{ color: passed ? 'green' : 'red' }}>{rule.label}</Text>
                     </View>
-                )}
-                <View style={styles.textBox}>
-                    <TextInput style={styles.txtInput} placeholder="Confirm password" value={confirmPassword} secureTextEntry={!showPassword} onChangeText={(text)=>setConfirmPassword(text)}/>
-                    <TouchableOpacity style={styles.alignIcon} onPress={() => setShowPassword(!showPassword)}>
-                        {showPassword ? <Icons name="eye-outline" size={24} color="grey"/> : <Icons name="eye-off-outline" size={24} color="grey"/>}
-                    </TouchableOpacity>
-                </View>
+                  );
+                })}
+              </View>
+            )}
+            <View style={styles.textBox}>
+              <TextInput style={styles.txtInput} placeholder="Confirm password" placeholderTextColor={'#7b8aa0'} value={confirmPassword} secureTextEntry={!showPassword} onChangeText={(text)=>setConfirmPassword(text)}/>
+              <TouchableOpacity style={styles.alignIcon} onPress={() => setShowPassword(!showPassword)}>
+                {showPassword ? <Icons name="eye-outline" size={24} color="grey"/> : <Icons name="eye-off-outline" size={24} color="grey"/>}
+              </TouchableOpacity>
             </View>
-            <View>
-                <CusButton onPress={handleSigUp} text="Register" buttonStyle={{border:'none',  backgroundColor: isFormValid ? '#54408C' : '#ccc', opacity: isFormValid ? 1 : 0.6}}  disabled={!isFormValid} />
-            </View>
-            <View style={{display:'flex', flexDirection:'row', alignItems:'center',alignSelf:'center', width:243, marginVertical:16, justifyContent:'center'}}>
-                <Text style={[styles.txt,{color:'#A6A6A6'}]}>Have an account? </Text>
-                <Text style={[styles.txt,{color:'#54408C'}]} onPress={()=>navigation.replace('Login')}> Login</Text>
-            </View>
-            <View style={{display:'flex', flexDirection:'column', alignItems:'center',position:'absolute', bottom:-170, alignSelf:'center',justifyContent:'center'}}>
-                <Text style={{fontSize:14, fontWeight:500, lineHeight:19.6, textAlign:'center', color:'#A6A6A6'}}>By clicking Register, you agree to our</Text>
-                <Text style={{fontSize:14, fontWeight:500, lineHeight:19.6, textAlign:'center', color:'#54408C'}}>Terms and Data Policy</Text>
-            </View>
+          </View>
+          <View>
+            <CusButton onPress={handleSigUp} text="Register" buttonStyle={{border:'none',  backgroundColor: isFormValid ? '#54408C' : '#ccc', opacity: isFormValid ? 1 : 0.6}}  disabled={!isFormValid} />
+          </View>
+          <View style={{display:'flex', flexDirection:'row', alignItems:'center',alignSelf:'center', width:243, marginVertical:16, justifyContent:'center'}}>
+            <Text style={[styles.txt,{color:'#A6A6A6'}]}>Have an account? </Text>
+            <Text style={[styles.txt,{color:'#54408C'}]} onPress={()=>navigation.replace('Login')}> Login</Text>
+          </View>
+          <View style={{display:'flex', flexDirection:'column', alignItems:'center',position:'absolute', bottom:-170, alignSelf:'center',justifyContent:'center'}}>
+            <Text style={{fontSize:14, fontWeight:500, lineHeight:19.6, textAlign:'center', color:'#A6A6A6'}}>By clicking Register, you agree to our</Text>
+            <Text style={{fontSize:14, fontWeight:500, lineHeight:19.6, textAlign:'center', color:'#54408C'}}>Terms and Data Policy</Text>
+          </View>
         </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -201,6 +234,7 @@ const styles = StyleSheet.create({
         width:270,
         height:48,
         paddingHorizontal:10,
+        color:'#000',
     },
     ruleList: {
         marginHorizontal: 20,

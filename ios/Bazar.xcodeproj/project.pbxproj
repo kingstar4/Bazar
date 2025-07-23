@@ -36,7 +36,8 @@
 		FEF2DCB089964D98B724EDC1 /* avatar2.png in Resources */ = {isa = PBXBuildFile; fileRef = 06ED611D18C84094B1D8DF47 /* avatar2.png */; };
 		6E14AF3A124645C7966C5A2A /* avatar3.png in Resources */ = {isa = PBXBuildFile; fileRef = FCD5E1F979F445448555A33C /* avatar3.png */; };
 		4CDD5722101D4A36AD26E654 /* avatar4.png in Resources */ = {isa = PBXBuildFile; fileRef = 3906A12254644D50B78534F2 /* avatar4.png */; };
-		D68B94D4ABA64A26899F3198 /* loader.json in Resources */ = {isa = PBXBuildFile; fileRef = D3031100E00C40B5B5CD6E55 /* loader.json */; };
+		2692B2996A084067A28C6B1E /* b1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AA50C8C921D14D238F9AC6A3 /* b1.jpg */; };
+		27A0DCC42A2E42A690073FB7 /* b2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = AFE67A63BB414E629DEAC391 /* b2.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +87,8 @@
 		06ED611D18C84094B1D8DF47 /* avatar2.png */ = {isa = PBXFileReference; name = "avatar2.png"; path = "../assets/img/avatar2.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		FCD5E1F979F445448555A33C /* avatar3.png */ = {isa = PBXFileReference; name = "avatar3.png"; path = "../assets/img/avatar3.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		3906A12254644D50B78534F2 /* avatar4.png */ = {isa = PBXFileReference; name = "avatar4.png"; path = "../assets/img/avatar4.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D3031100E00C40B5B5CD6E55 /* loader.json */ = {isa = PBXFileReference; name = "loader.json"; path = "../assets/img/loader.json"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AA50C8C921D14D238F9AC6A3 /* b1.jpg */ = {isa = PBXFileReference; name = "b1.jpg"; path = "../assets/img/b1.jpg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AFE67A63BB414E629DEAC391 /* b2.jpg */ = {isa = PBXFileReference; name = "b2.jpg"; path = "../assets/img/b2.jpg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,7 +199,8 @@
 				06ED611D18C84094B1D8DF47 /* avatar2.png */,
 				FCD5E1F979F445448555A33C /* avatar3.png */,
 				3906A12254644D50B78534F2 /* avatar4.png */,
-				D3031100E00C40B5B5CD6E55 /* loader.json */,
+				AA50C8C921D14D238F9AC6A3 /* b1.jpg */,
+				AFE67A63BB414E629DEAC391 /* b2.jpg */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -297,7 +300,8 @@
 				FEF2DCB089964D98B724EDC1 /* avatar2.png in Resources */,
 				6E14AF3A124645C7966C5A2A /* avatar3.png in Resources */,
 				4CDD5722101D4A36AD26E654 /* avatar4.png in Resources */,
-				D68B94D4ABA64A26899F3198 /* loader.json in Resources */,
+				2692B2996A084067A28C6B1E /* b1.jpg in Resources */,
+				27A0DCC42A2E42A690073FB7 /* b2.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

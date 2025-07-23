@@ -71,10 +71,10 @@ const Profile = () => {
       </View>
 
       <View style={{ flex: 1, paddingHorizontal: 20, marginTop: 20 }}>
-        <ProfileCardUI text="My Account" iconName="person" />
+        {/* <ProfileCardUI text="My Account" iconName="person" /> */}
         <ProfileCardUI text="Favourite" onPress={() => navigation.navigate('FavouriteList')} itemNumber={favouriteCount > 0 ? `${favouriteCount}` : ''} iconName="heart" />
         <BiometricToggle />
-        <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses" />
+        {/* <ProfileCardUI text="Help Center" iconName="chatbubble-ellipses" /> */}
       </View>
 
       <Modal visible={modalVisible} animationType="slide" transparent>
@@ -157,9 +157,11 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     borderRadius: 8,
+    padding:12,
+    backgroundColor: '#ff4444',
   },
   logoutText: {
-    color: '#ff4444',
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: '600',
   },

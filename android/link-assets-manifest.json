@@ -38,16 +38,20 @@
       "sha1": "8ca9324791c2ff8fe21569ec05f067a2f0d6b69b"
     },
     {
+      "path": "assets/img/b1.jpg",
+      "sha1": "a1baf4b0bb043ac4c58ea60966abc0427f4a7134"
+    },
+    {
+      "path": "assets/img/b2.jpg",
+      "sha1": "587bf2a41b57636c85090a6c081f2e0124acdb21"
+    },
+    {
       "path": "assets/img/congrats.png",
       "sha1": "6f940f024390b0c6be764b3382ba06da3a8ead4c"
     },
     {
       "path": "assets/img/googleicon.png",
       "sha1": "9e06222a9c1e78ccc8b7da59c4fc1311b25f6ddd"
-    },
-    {
-      "path": "assets/img/loader.json",
-      "sha1": "80f676547810c7e109649b59e39d99a62723bb1c"
     },
     {
       "path": "assets/img/logo.png",

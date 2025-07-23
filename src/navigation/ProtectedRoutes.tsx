@@ -12,7 +12,7 @@ import { StyleSheet, Keyboard} from 'react-native';
 // import New from '../components/screens/New';
 import ProfileStackScreen from '../navigation/ProfileStack';
 import Library from '../components/screens/Library';
-import HomeStack from './NotificationStack';
+import HomeStack from './HomeStack';
 
 
 const Tab = createBottomTabNavigator();

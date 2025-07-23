@@ -4,179 +4,106 @@ import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 /**
- * Check if we have storage permissions
- * @returns Promise resolving to a boolean indicating if we have permissions
+ * Validate input parameters
  */
-const checkStoragePermissions = async (): Promise<boolean> => {
-  if (Platform.OS !== 'android') {
-    return true; // iOS doesn't need runtime permissions for this
+const validateInputs = (url: string, fileName: string): void => {
+  if (!url || typeof url !== 'string' || url.trim() === '') {
+    throw new Error('Invalid URL provided');
   }
-
-  try {
-    // For Android 13+ (API 33+)
-    if (Platform.Version >= 33) {
-      const hasReadMediaImages = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-      );
-      const hasReadMediaVideo = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO
-      );
-      const hasReadMediaAudio = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_AUDIO
-      );
-
-      return hasReadMediaImages && hasReadMediaVideo && hasReadMediaAudio;
-    }
-    // For Android 10-12 (API 29-32)
-    else if (Platform.Version >= 29) {
-      return await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      );
-    } 
-    // For Android 9 and below (API <= 28)
-    else {
-      const hasWriteStorage = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      );
-      const hasReadStorage = await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-      );
-
-      return hasWriteStorage && hasReadStorage;
-    }
-  } catch (error) {
-    console.error('Error checking permissions:', error);
-    return false;
+  if (!fileName || typeof fileName !== 'string' || fileName.trim() === '') {
+    throw new Error('Invalid filename provided');
   }
 };
 
 /**
- * Request storage permissions for Android
- * @returns boolean indicating if permissions were granted
+ * Get file extension from URL with better validation
+ */
+const getFileExtension = (url: string): string => {
+  try {
+    const urlLower = url.toLowerCase();
+
+    // Check for explicit file extensions
+    if (urlLower.includes('.pdf')) {return '.pdf';}
+    if (urlLower.includes('.epub')) {return '.epub';}
+
+    // Default to PDF for books
+    return '.pdf';
+  } catch (error) {
+    console.warn('Error determining file extension, defaulting to PDF:', error);
+    return '.pdf';
+  }
+};
+
+/**
+ * Sanitize filename to remove invalid characters
+ */
+const sanitizeFileName = (fileName: string): string => {
+  return fileName
+    .replace(/[/\\?%*:|"<>]/g, '-')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, 100); // Limit length
+};
+
+/**
+ * Request storage permissions (simplified)
  */
 const requestStoragePermission = async (): Promise<boolean> => {
   if (Platform.OS !== 'android') {
-    return true; // iOS doesn't need runtime permissions for this
-  }
-
-  // First check if we already have permissions
-  const hasPermissions = await checkStoragePermissions();
-  if (hasPermissions) {
     return true;
   }
 
   try {
-    // For Android 13+ (API 33+)
-    if (Platform.Version >= 33) {
-      const permissions = [
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_AUDIO,
-      ];
-
-      const results = await PermissionsAndroid.requestMultiple(permissions);
-
-      // Check if all required permissions are granted
-      const allGranted = Object.values(results).every(
-        result => result === PermissionsAndroid.RESULTS.GRANTED
-      );
-
-      if (!allGranted) {
-        console.warn('Some media permissions were denied on Android 13+');
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Storage Permission',
+        message: 'Bazar needs access to your storage to download books.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
       }
-
-      return allGranted;
-    }
-    // For Android 10-12 (API 29-32)
-    else if (Platform.Version >= 29) {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Storage Permission',
-          message: 'Bazar needs access to your storage to download books.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }
-      );
-
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.warn('Storage permission denied on Android 10-12');
-      }
-
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-    // For Android 9 and below (API <= 28)
-    else {
-      const writeGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Storage Permission',
-          message: 'Bazar needs access to your storage to download books.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }
-      );
-
-      const readGranted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Storage Permission',
-          message: 'Bazar needs access to your storage to download books.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        }
-      );
-
-      const allGranted =
-        writeGranted === PermissionsAndroid.RESULTS.GRANTED && 
-        readGranted === PermissionsAndroid.RESULTS.GRANTED;
-
-      if (!allGranted) {
-        console.warn('Some storage permissions were denied on Android 9 or below');
-      }
-
-      return allGranted;
-    }
-  } catch (err) {
-    console.error('Error requesting permissions:', err);
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  } catch (error) {
+    console.error('Error requesting permissions:', error);
     return false;
   }
 };
 
 /**
- * Get the appropriate download directory based on platform and permissions
- * @param useExternalStorage Whether to try using external storage (requires permissions)
- * @returns Path to the download directory
+ * Get download directory (simplified)
  */
-const getDownloadDirectory = async (useExternalStorage: boolean = true): Promise<string> => {
-  // For iOS, always use the app's document directory
-  if (Platform.OS !== 'android') {
+const getDownloadDirectory = async (): Promise<string> => {
+  if (Platform.OS === 'ios') {
     return RNFS.DocumentDirectoryPath;
   }
 
-  // For Android, check if we have permissions for external storage
-  if (useExternalStorage) {
-    const hasPermission = await checkStoragePermissions();
+  // Try to use Downloads folder, fallback to app directory
+  try {
+    const hasPermission = await requestStoragePermission();
     if (hasPermission) {
-      // Use the system's Download directory if we have permission
       return RNFS.DownloadDirectoryPath;
     }
+  } catch (error) {
+    console.log('Permission denied, using app storage');
   }
 
-  // Fallback to app-specific storage (doesn't require permissions)
-  console.log('Using app-specific storage for downloads');
-  return `${RNFS.DocumentDirectoryPath}/downloads`;
+  // Fallback to app directory
+  const appDownloadDir = `${RNFS.DocumentDirectoryPath}/downloads`;
+  const dirExists = await RNFS.exists(appDownloadDir);
+  if (!dirExists) {
+    await RNFS.mkdir(appDownloadDir);
+  }
+  return appDownloadDir;
 };
 
 /**
- * Download a file from a URL to the device's storage
+ * Download a file from a URL to the device's storage (simplified)
  * @param url URL of the file to download
  * @param fileName Name to save the file as (without extension)
  * @param customPath Optional custom path to save the file to
- * @param forceAppStorage Force using app-specific storage even if permissions are available
+ * @param forceAppStorage Force using app-specific storage
  * @returns Promise resolving to the path where the file was saved
  */
 export const downloadFile = async (
@@ -186,63 +113,27 @@ export const downloadFile = async (
   forceAppStorage: boolean = false
 ): Promise<string> => {
   try {
-    // Determine file extension from URL
-    const fileExtension = url.toLowerCase().endsWith('.pdf')
-      ? '.pdf'
-      : url.toLowerCase().endsWith('.epub')
-        ? '.epub'
-        : url.includes('pdf')
-          ? '.pdf'
-          : '.epub';
+    // Validate inputs
+    validateInputs(url, fileName);
 
-    // Clean the filename to avoid invalid characters
-    const sanitizedFileName = fileName
-      .replace(/[/\\?%*:|"<>]/g, '-')
-      .trim();
-
+    // Get file extension and sanitize filename
+    const fileExtension = getFileExtension(url);
+    const sanitizedFileName = sanitizeFileName(fileName);
     const fullFileName = `${sanitizedFileName}${fileExtension}`;
 
     // Determine download destination
     let downloadDest: string;
-    let useExternalStorage = !forceAppStorage;
-
-    // Request permissions if trying to use external storage
-    if (useExternalStorage && Platform.OS === 'android') {
-      const hasPermission = await requestStoragePermission();
-      if (!hasPermission) {
-        console.log('Storage permissions denied, falling back to app storage');
-        useExternalStorage = false;
-
-        // Show a toast to inform the user
-        Toast.show({
-          type: 'info',
-          text1: 'Using App Storage',
-          text2: 'Files will be saved within the app since storage permissions were denied',
-          visibilityTime: 4000,
-        });
-      }
-    }
 
     if (customPath) {
-      // Use custom path if provided
       downloadDest = `${customPath}/${fullFileName}`;
     } else {
-      // Get appropriate download directory based on permissions
-      const downloadDir = await getDownloadDirectory(useExternalStorage);
-
-      // Ensure the directory exists
-      const dirExists = await RNFS.exists(downloadDir);
-      if (!dirExists) {
-        await RNFS.mkdir(downloadDir);
-      }
-
+      const downloadDir = await getDownloadDirectory();
       downloadDest = `${downloadDir}/${fullFileName}`;
     }
 
-    // Check if file already exists
+    // Check if file already exists and handle overwrite
     const fileExists = await RNFS.exists(downloadDest);
     if (fileExists) {
-      // Ask user if they want to overwrite
       return new Promise((resolve, reject) => {
         Alert.alert(
           'File Already Exists',
@@ -285,67 +176,100 @@ export const downloadFile = async (
 };
 
 /**
- * Perform the actual download operation
+ * Perform the actual download operation (simplified)
  * @param url URL to download from
  * @param destination Path to save the file to
- * @param fileExtension File extension (.pdf or .epub)
  * @returns Promise resolving to the path where the file was saved
  */
 const performDownload = async (
   url: string,
-  destination: string,
-  // fileExtension: string
+  destination: string
 ): Promise<string> => {
-  // Show download started toast
-  Toast.show({
-    type: 'info',
-    text1: 'Download Started',
-    text2: 'Your book is being downloaded...',
-  });
+  try {
+    // Validate URL format
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      throw new Error('Invalid URL format');
+    }
 
-  // Start the download
-  const result = await RNFS.downloadFile({
-    fromUrl: url,
-    toFile: destination,
-    background: true, // Allow download to continue in background
-    discretionary: true, // Allow the OS to control the timing and speed
-    progressDivider: 10, // Report progress in 10% increments
-    progress: (res) => {
-      const progress = res.bytesWritten / res.contentLength;
-      console.log(`Download progress: ${Math.round(progress * 100)}%`);
-    },
-  }).promise;
-  // Check if download was successful
-  if (result.statusCode !== 200 && result.statusCode !== 206) {
-    throw new Error(`Download failed with status code: ${result.statusCode}`);
+    // Show download started toast
+    Toast.show({
+      type: 'info',
+      text1: 'Download Started',
+      text2: 'Your book is being downloaded...',
+    });
+
+    // Start the download with simplified options
+    const result = await RNFS.downloadFile({
+      fromUrl: url,
+      toFile: destination,
+      background: true,
+      discretionary: true,
+      progressDivider: 10,
+      progress: (res) => {
+        if (res.contentLength > 0) {
+          const progress = res.bytesWritten / res.contentLength;
+          console.log(`Download progress: ${Math.round(progress * 100)}%`);
+        }
+      },
+    }).promise;
+
+    // Check if download was successful
+    if (result.statusCode !== 200 && result.statusCode !== 206) {
+      throw new Error(`Download failed with status code: ${result.statusCode}`);
+    }
+
+    // Verify file was actually downloaded
+    const fileExists = await RNFS.exists(destination);
+    if (!fileExists) {
+      throw new Error('File was not saved properly');
+    }
+
+    // Check file size
+    const stats = await RNFS.stat(destination);
+    if (stats.size === 0) {
+      await RNFS.unlink(destination); // Remove empty file
+      throw new Error('Downloaded file is empty');
+    }
+
+    // Show success toast
+    Toast.show({
+      type: 'success',
+      text1: 'Download Complete',
+      text2: 'Your book has been downloaded successfully',
+    });
+
+    console.log('Downloaded to:', destination);
+    return destination;
+
+  } catch (error) {
+    // Clean up failed download
+    try {
+      const fileExists = await RNFS.exists(destination);
+      if (fileExists) {
+        await RNFS.unlink(destination);
+      }
+    } catch (cleanupError) {
+      console.warn('Failed to clean up incomplete download:', cleanupError);
+    }
+
+    throw error;
   }
-
-  // Show success toast
-  Toast.show({
-    type: 'success',
-    text1: 'Download Complete',
-    text2: 'Your book has been downloaded successfully',
-  });
-
-  console.log('Downloaded to:', destination);
-
-  return destination;
 };
 
 /**
- * Download and open a file
+ * Download and open a file (simplified)
  * @param url URL of the file to download
  * @param fileName Name to save the file as (without extension)
- * @param forceAppStorage Force using app-specific storage even if permissions are available
  */
 export const downloadAndOpenFile = async (
   url: string,
-  fileName: string,
-  // forceAppStorage: boolean = false
+  fileName: string
 ): Promise<void> => {
   try {
+    // Validate inputs first
+    validateInputs(url, fileName);
+
     // Always use app storage for files that will be opened immediately
-    // This ensures we can access the file without storage permission issues
     const filePath = await downloadFile(url, fileName, undefined, true);
 
     // Show a toast before opening
@@ -355,18 +279,23 @@ export const downloadAndOpenFile = async (
       text2: 'The file has been downloaded and will open shortly',
       visibilityTime: 2000,
     });
+
     // Give the toast a moment to display before opening the file
     setTimeout(async () => {
       try {
+        // Determine MIME type based on file extension
+        const mimeType = filePath.endsWith('.pdf')
+          ? 'application/pdf'
+          : 'application/epub+zip';
+
         // Open the file with the appropriate app
         await Share.open({
           url: `file://${filePath}`,
-          type: filePath.endsWith('.pdf') ? 'application/pdf' : 'application/epub+zip',
+          type: mimeType,
         });
       } catch (shareError) {
         console.error('Error opening file with Share:', shareError);
 
-        // If Share fails, try to provide helpful information
         Toast.show({
           type: 'error',
           text1: 'Cannot Open File',
@@ -375,6 +304,7 @@ export const downloadAndOpenFile = async (
         });
       }
     }, 500);
+
   } catch (error) {
     console.error('Error downloading or opening file:', error);
 

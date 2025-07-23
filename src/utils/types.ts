@@ -93,6 +93,7 @@ export type OnboardingStackParamList = {
 export type PublicStackParamList = {
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
 };
 
 // Screens inside AppStack (ProtectedRoutes)

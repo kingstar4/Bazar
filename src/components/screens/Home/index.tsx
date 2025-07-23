@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, TextInput, RefreshControl, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, View, FlatList, Dimensions, ScrollView, TextInput, RefreshControl, TouchableOpacity, Text } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import CusHeaders from '../../customUI/CusHeaders';
 import Carousel from './Carousel';
@@ -22,11 +22,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Recommended from './Recommended';
 import { TopBooksSkeleton, CarouselSectionSkeleton, RecommendedSectionSkeleton, VendorsSkeleton } from '../../customUI/HomeSkeleton';
-
-
-
+import FastImage from 'react-native-fast-image';
 
 const {width} = Dimensions.get('window');
+const imageAspectRatio = 16 / 9;
 
 const Home = () => {
     const navigation = useNavigation<NavigationProp<HomeParamList>>();
@@ -37,7 +36,6 @@ const Home = () => {
     const [isScrolling, setIsScrolling] = React.useState(false);
 
     // Global Zustand State
-
     const search = useAppStore((state)=> state.search);
     const setSearch = useAppStore((state)=> state.setSearch);
     const selectedBook = useBookStore((state)=> state.selectedBook);
@@ -69,8 +67,6 @@ const Home = () => {
         setSelectedBook(book);
         setIsModalVisible(true);
     }, [setSelectedBook, setIsModalVisible]);
-
-
 
     // Memoize scroll function to avoid recreation
     const scroll = React.useCallback((event: ScrollEvent): void => {
@@ -106,7 +102,6 @@ const Home = () => {
         return () => setIsScrolling(false);
     }, []);
 
-
     // Memoize indicator to avoid unnecessary re-renders
     const indicator = React.useMemo(() => {
         return carouselBooks?.map((_, index) => (
@@ -125,7 +120,6 @@ const Home = () => {
         ));
     }, [carouselBooks, presentIndex]);
 
-
     // function to handle search submit
     // Memoize search submit handler
     const handleSearchSubmit = React.useCallback(() => {
@@ -137,7 +131,6 @@ const Home = () => {
           })
         );
       }
-
     }, [navigation, search]);
 
     // Pull-to-refresh handler
@@ -207,7 +200,7 @@ const Home = () => {
           <>
             <FlatList
               data={carouselBooks}
-              renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>} 
+              renderItem={({item}) => <Carousel item={item} onPress={handleBookPress}/>}
               onScrollBeginDrag={() => setIsScrolling(true)}
               onScrollEndDrag={() => setIsScrolling(false)}
               onMomentumScrollEnd={scroll}
@@ -232,18 +225,24 @@ const Home = () => {
           </>
         )}
 
-
         {/* Vendors Section */}
         {isLoadingHistory ? (
           <VendorsSkeleton />
-        ) :
-        vendors.length > 0 &&
-
-        (<View style={{paddingTop: 10,marginTop:20}}>
-          <CusHeaders text="Best Vendors" />
-          {/* <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item)=>item.id} showsHorizontalScrollIndicator={false}/> */}
-          <FlatList data={vendors} renderItem={Vendors} horizontal keyExtractor={(item, index)=>item.id + index} showsHorizontalScrollIndicator={false}/>
-        </View>)}
+        ) : (
+          <View style={{paddingTop: 10, marginTop: 20}}>
+            <View style={styles.imageContainer}>
+              <FastImage
+                source={require('../../../../assets/img/b2.jpg')}
+                style={styles.backgroundImage}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <View style={styles.overlay} />
+              <Text style={styles.overlayText}>
+                Unlock Your Next Read
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Recommended Section */}
         <View style={{paddingBottom: 70}}>
@@ -262,8 +261,7 @@ const Home = () => {
           )}
         </View>
 
-
-        </ScrollView>
+      </ScrollView>
       {selectedBook && isModalVisible && (
         <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>
       )}
@@ -305,30 +303,63 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
     },
     searchInput: {
-    flex: 1,
-    height: 50,
-    fontSize: 16,
-    color: '#333',
-
-  },
-  clearButton:{
-    padding: 8,
-    fontWeight: 'bold',
-  },
-  searchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      alignSelf:'center',
-      marginHorizontal: 20,
-      marginVertical: 10,
-      backgroundColor: '#f2f2f4',
-      borderRadius: 25,
-      borderWidth: 0,
-      paddingHorizontal: 12,
       flex: 1,
-      marginRight: 10,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
+      height: 50,
+      fontSize: 16,
+      color: '#333',
+    },
+    clearButton:{
+      padding: 8,
+      fontWeight: 'bold',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf:'center',
+        marginHorizontal: 20,
+        marginVertical: 10,
+        backgroundColor: '#f2f2f4',
+        borderRadius: 25,
+        borderWidth: 0,
+        paddingHorizontal: 12,
+        flex: 1,
+        marginRight: 10,
+    },
+    searchIcon: {
+      marginRight: 8,
+    },
+    imageContainer: {
+      position: 'relative',
+      width: width,
+      height: width / imageAspectRatio,
+      alignSelf: 'center',
+    },
+    backgroundImage: {
+      width: '100%',
+      height: '100%',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+      zIndex: 1,
+    },
+    overlayText: {
+      position: 'absolute',
+      top: '50%',
+      left: 0,
+      right: 0,
+      textAlign: 'center',
+      color: '#ffffff',
+      fontSize: 26,
+      fontWeight: 'bold',
+      zIndex: 2,
+      textShadowColor: 'rgba(0, 0, 0, 0.75)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 4,
+      transform: [{ translateY: -13 }], // Half of font size to center vertically
+    },
 });
