@@ -4,8 +4,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import CusHeaders from '../../customUI/CusHeaders';
 import Carousel from './Carousel';
 import CustomMainHeader from '../../customUI/CustomMainHeader';
-import { vendors } from '../../data/dataTables';
-import Vendors from './Vendors';
 import { HomeParamList, ScrollEvent } from '../../../utils/types';
 import { useQuery } from '@tanstack/react-query';
 import { fetchHomeBooks } from '../../../api/bookApi';
