@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import { Text, View, TouchableOpacity, Image, Dimensions } from 'react-native';
 import React from 'react';
+import slides from '../../components/data/slides';
 
 type SlideProps = {
     item: {
@@ -9,17 +10,20 @@ type SlideProps = {
         subTitle: string;
     };
     skipFunction: () => void;
+    slideIndex: number;
 }
 
 const COLORS = {primary: '#282534', white:'#fff'};
 const { width } = Dimensions.get('window');
 
 // Slide component to render each slide in the onboarding process
-const Slide = ({item, skipFunction}: SlideProps) => {
+const Slide = ({item, skipFunction, slideIndex}: SlideProps) => {
+  const isLastSlide = slideIndex === slides.length - 1; // Check if this is the last slide
+  
   return (
     <View style={{ backgroundColor: COLORS.primary , flex: 1, paddingHorizontal: 14, width:width, paddingTop:14}}>
 
-        {item.slideImg.length !== -1 && (
+        {item.slideImg.length !== -1 && !isLastSlide && (
             <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', padding: 20}}>
                 <TouchableOpacity onPress={skipFunction}>
                     <Text style={{color:COLORS.white, fontSize:17, fontWeight:500}}>Skip</Text>

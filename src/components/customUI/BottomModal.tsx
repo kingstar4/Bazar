@@ -135,7 +135,7 @@ const BottomModal = ({onClose, book, visible}: Props) => {
               <View style={styles.imgContainer}>
                 <FastImage
                   source={{
-                    uri: imageLinks?.thumbnail || 'https://via.placeholder.com/135x150',
+                    uri: imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/135x150',
                     priority: FastImage.priority.high,
                     cache: FastImage.cacheControl.immutable,
                   }}

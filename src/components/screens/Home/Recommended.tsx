@@ -21,7 +21,7 @@ const Recommended = ({item, onPress}: Props) => {
   }
   // const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/100x100';
   const authorName = item.volumeInfo.authors ? item.volumeInfo.authors[0] : 'Unknown Author';
-  const bookImg = item.volumeInfo.imageLinks?.thumbnail;
+  const bookImg = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://');
   const{ title} = item.volumeInfo;
 
 

@@ -47,7 +47,7 @@ const OnboardBody = () => {
     return (
       <SafeAreaView style={{ flex:1, backgroundColor: COLORS.primary}}>
         <StatusBar backgroundColor={COLORS.primary} />
-        <FlatList data={slides} renderItem={({item})=> <Slide item={item} skipFunction={skipFunction} />} ref={ref} onMomentumScrollEnd={scrollFunction} scrollEventThrottle={16} horizontal pagingEnabled showsHorizontalScrollIndicator={false} keyExtractor={(item)=>item.id} />
+        <FlatList data={slides} renderItem={({item, index})=> <Slide item={item} skipFunction={skipFunction} slideIndex={index} />} ref={ref} onMomentumScrollEnd={scrollFunction} scrollEventThrottle={16} horizontal pagingEnabled showsHorizontalScrollIndicator={false} keyExtractor={(item)=>item.id} />
         <Footer currentIndex={currentIndex} nextSlide={nextSlide} skipFunction={skipFunction} />
       </SafeAreaView>
     );

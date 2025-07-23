@@ -15,7 +15,7 @@ const {width: screenWidth} = Dimensions.get('window');
 const cardWidth = screenWidth - 20;
 
 const Carousel = ({item, onPress}: CarouselProps) => {
-  const imageUrl = item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/135x150';
+  const imageUrl = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/135x150';
   const price = item.saleInfo?.listPrice?.amount
     ? `$${item.saleInfo.listPrice.amount}`
     : 'Not for sale';

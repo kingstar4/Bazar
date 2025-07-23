@@ -10,7 +10,7 @@ export const authenticateBiometric = async () => {
         promptMessage: biometryType === 'FaceID' ? 'Use Face ID' : 'Use Fingerprint',
     });
 
-    if (result) {
+    if (result.success) {
         return { success: true };
     } else {
         return { success: false, message: 'Biometric authentication failed' };

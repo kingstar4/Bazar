@@ -36,7 +36,7 @@ const FavouriteList = () => {
           <Pressable onPress={()=> handleBookPress(item)}>
             <View style={styles.itemContainer}>
               <Image
-                source={{ uri: item.volumeInfo.imageLinks?.thumbnail || 'https://via.placeholder.com/80x100' }}
+                source={{ uri: item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/80x100' }}
                 style={styles.bookImage}
               />
               <View style={styles.infoContainer}>
