@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import { Book } from '../utils/types';
 
 type User = {
@@ -136,8 +137,38 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   // Called when user logs out
   logout: async () => {
-    await AsyncStorage.removeItem('authToken');
-    set({ isAuthenticated: false });
+    try {
+      // Check if there's a current user before signing out
+      const currentUser = auth().currentUser;
+      if (currentUser) {
+        await auth().signOut();
+        console.log('Firebase user signed out');
+      } else {
+        console.log('No Firebase user to sign out');
+      }
+
+      // Clear local storage
+      await AsyncStorage.removeItem('authToken');
+      await AsyncStorage.removeItem('userInfo');
+
+      // Update state
+      set({
+        isAuthenticated: false,
+        user: null,
+      });
+
+      console.log('User successfully logged out');
+    } catch (error) {
+      console.error('Error during logout:', error);
+
+      // Even if Firebase signout fails, clear local data
+      await AsyncStorage.removeItem('authToken');
+      await AsyncStorage.removeItem('userInfo');
+      set({
+        isAuthenticated: false,
+        user: null,
+      });
+    }
   },
 
   setBiometricEnabled: async (enabled) => {

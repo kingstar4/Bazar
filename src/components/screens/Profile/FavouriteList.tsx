@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, FlatList, Image, Pressable } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { useAppStore } from '../../../store/useAppStore';
 // import { useBookStore } from '../../../store/useBookStore';
 import BottomModal from '../../customUI/BottomModal';
 import { Book } from '../../../utils/types';
+import FastImage from 'react-native-fast-image';
 
 
 
@@ -32,11 +34,17 @@ const FavouriteList = () => {
       <FlatList
         data={favourites}
         keyExtractor={item => item.id}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          const bookImg = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://');
+          return(
           <Pressable onPress={()=> handleBookPress(item)}>
             <View style={styles.itemContainer}>
-              <Image
-                source={{ uri: item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/80x100' }}
+              <FastImage
+                source={
+                  bookImg ?
+                  { uri: bookImg}
+                  : require('../../../../assets/img/default_book.jpg')
+                }
                 style={styles.bookImage}
               />
               <View style={styles.infoContainer}>
@@ -45,7 +53,10 @@ const FavouriteList = () => {
               </View>
             </View>
           </Pressable>
-        )}
+        );
+      }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
       />
       {selectedBook && isModalVisible && (
             <BottomModal book={selectedBook} visible={isModalVisible} onClose={()=> setIsModalVisible(false)}/>

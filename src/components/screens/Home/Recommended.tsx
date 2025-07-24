@@ -59,11 +59,15 @@ const Recommended = ({item, onPress}: Props) => {
           {/* Book Image */}
           <View style={styles.imgContainer}>
             <FastImage
-              source={{
-                uri: bookImg || 'https://via.placeholder.com/135x150',
-                priority: FastImage.priority.high,
-                cache: FastImage.cacheControl.immutable,
-              }}
+              source={
+                bookImg
+                  ? {
+                      uri: bookImg,
+                      priority: FastImage.priority.high,
+                      cache: FastImage.cacheControl.immutable,
+                    }
+                  : require('../../../../assets/img/default_book.jpg')
+              }
               style={styles.bookImage}
               resizeMode={FastImage.resizeMode.cover}
             />

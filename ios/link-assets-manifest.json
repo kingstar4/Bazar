@@ -38,16 +38,16 @@
       "sha1": "8ca9324791c2ff8fe21569ec05f067a2f0d6b69b"
     },
     {
-      "path": "assets/img/b1.jpg",
-      "sha1": "a1baf4b0bb043ac4c58ea60966abc0427f4a7134"
-    },
-    {
       "path": "assets/img/b2.jpg",
       "sha1": "587bf2a41b57636c85090a6c081f2e0124acdb21"
     },
     {
       "path": "assets/img/congrats.png",
       "sha1": "6f940f024390b0c6be764b3382ba06da3a8ead4c"
+    },
+    {
+      "path": "assets/img/default_book.jpg",
+      "sha1": "9924e84e36a4c06faf8a34c291abd750e44bfa23"
     },
     {
       "path": "assets/img/googleicon.png",

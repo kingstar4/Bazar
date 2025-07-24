@@ -11,7 +11,7 @@ type CardUIProps = {
 }
 
 const CardUI = ({item, onPress}:CardUIProps) => {
-    const imageUrl = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/135x150';
+    const imageUrl = item.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://');
     const sale = item.saleInfo;
     const authors = item.volumeInfo?.authors;
     const getPriceText = () => {
@@ -31,10 +31,15 @@ const CardUI = ({item, onPress}:CardUIProps) => {
           <View style={[styles.cardBody, {backgroundColor: getColorFromId(item.id)}]}>
             <View style={{marginBottom:60,  width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', elevation:6, borderRadius:12, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0, height:2}, shadowOpacity:0.25, shadowRadius:3.84, backgroundColor:'#fff'}}>
               <FastImage
-                source={{
+                source={
+                  imageUrl ?
+                  {
                   uri: imageUrl,
-                  priority: FastImage.priority.normal,
-                }}
+                  priority: FastImage.priority.high,
+                  cache: FastImage.cacheControl.immutable,
+                }
+                : require('../../../assets/img/default_book.jpg')
+                }
                 style={{width:100, height:150, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:12}}
                 resizeMode={FastImage.resizeMode.cover}
               />

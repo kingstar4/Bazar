@@ -82,7 +82,8 @@ const BottomModal = ({onClose, book, visible}: Props) => {
     return null;
   }
 
-  const { title, description, imageLinks, authors } = book.volumeInfo;
+  const { title, description, authors } = book.volumeInfo;
+  const bookImg = book.volumeInfo.imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://');
   const price = book.saleInfo?.saleability === 'FOR_SALE'
     ? `${book.saleInfo?.retailPrice?.amount} ${book.saleInfo?.retailPrice?.currencyCode}`
     : book.saleInfo?.saleability === 'FREE'
@@ -134,11 +135,15 @@ const BottomModal = ({onClose, book, visible}: Props) => {
             <View style={styles.headerSection}>
               <View style={styles.imgContainer}>
                 <FastImage
-                  source={{
-                    uri: imageLinks?.thumbnail?.replace(/^http:\/\//i, 'https://') || 'https://via.placeholder.com/135x150',
+                  source={
+                    bookImg ?
+                    {
+                    uri: bookImg,
                     priority: FastImage.priority.high,
                     cache: FastImage.cacheControl.immutable,
-                  }}
+                  } :
+                  require('../../../assets/img/default_book.jpg')
+                }
                   style={styles.bookImage}
                   resizeMode={FastImage.resizeMode.cover}
                 />
