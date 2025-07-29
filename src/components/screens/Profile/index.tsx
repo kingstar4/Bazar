@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions, ActivityIndicator, Modal } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, {useState} from 'react';
 import { useAppStore } from '../../../store/useAppStore';
 import ProfileCardUI from '../../customUI/ProfileCardUI';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -16,10 +16,6 @@ const Profile = () => {
   const favouriteCount = useAppStore((state) => state.favourites.length);
   const navigation = useNavigation<NavigationProp<ProfileParamList>>();
   const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    console.log('Zustand user:', user);
-  }, [user]);
 
   const handleSelectAvatar = async (avatarName: string) => {
     if (!user) {return;}
@@ -157,12 +153,12 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     borderRadius: 8,
-    padding:12,
+    padding:7,
     backgroundColor: '#ff4444',
   },
   logoutText: {
     color: '#ffffff',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '600',
   },
   modalOverlay: {

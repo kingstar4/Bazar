@@ -1,18 +1,18 @@
 /* eslint-disable react-native/no-inline-styles */
-import { Switch, Text, View, StyleSheet  } from 'react-native';
+import { Switch, Text, View, StyleSheet } from 'react-native';
 import { useAppStore } from '../../store/useAppStore';
+// import { authenticateBiometric } from '../../hooks/useBiometricAuth';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const BiometricToggle = () => {
   const isEnabled = useAppStore((s) => s.isBiometricEnabled);
   const setEnabled = useAppStore((s) => s.setBiometricEnabled);
 
-  // Synchronous for handling the switch
-  // The will ensure that the switch updates immediately without needing to wait for a state change
-
-  const handleToggle = (value: boolean) =>{
+  const handleToggle = async (value: boolean) => {
+    // Update state immediately for UI responsiveness
     useAppStore.setState({ isBiometricEnabled: value });
-    setEnabled(value);
+    // Then persist to storage
+    await setEnabled(value);
   };
 
   return (

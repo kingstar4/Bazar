@@ -10,6 +10,8 @@ import { RootStackParamList, PublicStackParamList } from '../../utils/types'; //
 import Toast from 'react-native-toast-message';
 import { useAppStore } from '../../store/useAppStore';
 import { checkBiometric } from '../../utils/checkBiometric';
+import * as Keychain from 'react-native-keychain';
+
 
 
 
@@ -23,6 +25,7 @@ const Login = ({navigation}: LoginProps) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [biometricLoading, setBiometricLoading] = useState(false);
     const {login} = useAppStore.getState();
     const [isFormValid, setIsFormValid] = useState(false);
     const isEnabled = useAppStore((s) => s.isBiometricEnabled);
@@ -39,6 +42,20 @@ const Login = ({navigation}: LoginProps) => {
             const uid = userCredential.user.uid;
 
             await login(token, uid);
+
+             // 🔐 Save credentials to Keychain if biometric is enabled
+            const isBiometricEnabled = useAppStore.getState().isBiometricEnabled;
+            if (isBiometricEnabled) {
+            await Keychain.setGenericPassword(email, password, {
+                accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
+                accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED,
+                authenticationPrompt: {
+                title: 'Authenticate to save your credentials',
+                },
+                service: 'com.bazar.biometric',
+            });
+            }
+
 
             Toast.show({
                 type: 'success',
@@ -85,6 +102,24 @@ const Login = ({navigation}: LoginProps) => {
         }
     };
 
+    const handleBiometricLogin = async () => {
+        setBiometricLoading(true);
+        try {
+            await checkBiometric();
+        } catch (error: any) {
+            Toast.show({
+                type: 'error',
+                text1: 'Biometric Login Failed',
+                text2: error.message || 'Failed to verify biometrics',
+                position: 'top',
+                visibilityTime: 3000,
+                autoHide: true,
+                topOffset: 30,
+            });
+        } finally {
+            setBiometricLoading(false);
+        }
+    };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
@@ -95,7 +130,7 @@ const Login = ({navigation}: LoginProps) => {
                     <Text style={{fontWeight:400, fontSize:16, lineHeight:24, color:'#A6A6A6'}}>Sign in to your account</Text>
                 </View>
                 <View style={styles.textBox}>
-                    <TextInput style={{width:327,paddingHorizontal:10, color:'#000'}} placeholder="Your email" placeholderTextColor={'#7b8aa0'} value={email} onChangeText={(text)=>setEmail(text)} keyboardType="email-address"/>
+                    <TextInput style={{width:327,paddingHorizontal:10, color:'#000'}} placeholder="Your email" placeholderTextColor={'#7b8aa0'} autoCapitalize="none" value={email} onChangeText={(text)=>setEmail(text)} keyboardType="email-address"/>
                 </View>
                 <View style={styles.textBox}>
                     <TextInput style={{width:327,paddingHorizontal:10, color:'#000'}} placeholder="Your password" placeholderTextColor={'#7b8aa0'} value={password} secureTextEntry={!showPassword} onChangeText={(text)=>setPassword(text)}/>
@@ -123,11 +158,20 @@ const Login = ({navigation}: LoginProps) => {
             </View>
 
             {isEnabled &&
-                (<TouchableOpacity style={styles.fingerPrint} onPress={()=>checkBiometric()}>
+                (<TouchableOpacity
+                    style={styles.fingerPrint}
+                    onPress={handleBiometricLogin}
+                >
                     <Icons name="finger-print-outline" size={20} color={'#54408C'} />
                 </TouchableOpacity>)
             }
         </View>
+        {biometricLoading && (
+            <View style={styles.loadingOverlay}>
+                <ActivityIndicator size="large" color="#54408C" />
+                <Text style={styles.loadingText}>Verifying biometrics...</Text>
+            </View>
+        )}
     </SafeAreaView>
   );
 };
@@ -139,7 +183,6 @@ const styles = StyleSheet.create({
         height: 1,
         width: 158,
         backgroundColor: '#D6D6D6',
-
     },
     txt:{
         textAlign:'center',
@@ -150,7 +193,6 @@ const styles = StyleSheet.create({
         position:'absolute',
         right:0,
         paddingHorizontal:20,
-
     },
     fingerPrint:{
         display:'flex',
@@ -174,5 +216,21 @@ const styles = StyleSheet.create({
         backgroundColor:'#e0e5f1',
         borderRadius:10,
         marginVertical:16,
+    },
+    loadingOverlay: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#54408C',
+        fontWeight: '500',
     },
 });

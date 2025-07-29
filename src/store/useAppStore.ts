@@ -148,8 +148,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
 
       // Clear local storage
-      await AsyncStorage.removeItem('authToken');
-      await AsyncStorage.removeItem('userInfo');
+      // await AsyncStorage.removeItem('authToken');
+      // await AsyncStorage.removeItem('userInfo');
 
       // Update state
       set({
@@ -162,8 +162,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       console.error('Error during logout:', error);
 
       // Even if Firebase signout fails, clear local data
-      await AsyncStorage.removeItem('authToken');
-      await AsyncStorage.removeItem('userInfo');
+      // await AsyncStorage.removeItem('authToken');
+      // await AsyncStorage.removeItem('userInfo');
       set({
         isAuthenticated: false,
         user: null,
@@ -202,7 +202,5 @@ export const useAppStore = create<AppState>((set, get) => ({
     const { favourites } = get();
     return favourites.some(b => b.id === bookId);
   },
-
-
 
 }));
